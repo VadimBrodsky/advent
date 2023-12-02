@@ -8,6 +8,11 @@ import (
 
 func DecodeInput(input string) []string {
 	codes := strings.Split(input, "\n")
+
+	for i, code := range codes {
+		codes[i] = replaceWordNumbers(code)
+	}
+
 	var numbers []string
 
 	for _, code := range codes {
@@ -52,4 +57,23 @@ func extractNumberFromString(s string) []rune {
 	}
 
 	return digits
+}
+
+var numberWords = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
+}
+
+func replaceWordNumbers(s string) string {
+	for word, number := range numberWords {
+		s = strings.ReplaceAll(s, word, word + number)
+	}
+	return s
 }
