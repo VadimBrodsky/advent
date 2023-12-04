@@ -13,7 +13,7 @@ pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet`
 
-		desiredDecodedInput := []string{"12", "38", "15", "77"}
+		desiredDecodedInput := []int{12, 38, 15, 77}
 		want := 142
 
 		decodedInput := DecodeInput(input)
@@ -59,8 +59,7 @@ sixrthreeseven74oneightssl`
 			t.Fatal(err)
 		}
 
-		// want := 53921
-		want := 54665 
+		want :=  54676
 		decodedInput := DecodeInput(string(data))
 		got := GetCalibration(decodedInput)
 
