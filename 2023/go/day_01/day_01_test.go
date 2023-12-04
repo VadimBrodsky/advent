@@ -17,7 +17,7 @@ treb7uchet`
 		want := 142
 
 		decodedInput := DecodeInput(input)
-		got := GetCalibration(decodedInput)
+		got := SumCoordinates(decodedInput)
 
 		if !slices.Equal(desiredDecodedInput, decodedInput) {
 			t.Errorf("expected decoded input of %v, got %v", desiredDecodedInput, decodedInput)
@@ -42,7 +42,7 @@ sixrthreeseven74oneightssl`
 		want := 349
 
 		decodedInput := DecodeInput(input)
-		got := GetCalibration(decodedInput)
+		got := SumCoordinates(decodedInput)
 
 		if !slices.Equal(desiredDecodedInput, decodedInput) {
 			t.Errorf("expected decoded input of %v, got %v", desiredDecodedInput, decodedInput)
@@ -61,7 +61,7 @@ sixrthreeseven74oneightssl`
 
 		want :=  54676
 		decodedInput := DecodeInput(string(data))
-		got := GetCalibration(decodedInput)
+		got := SumCoordinates(decodedInput)
 
 		if want != got {
 			t.Errorf("expected sum of %d, got %d", want, got)
