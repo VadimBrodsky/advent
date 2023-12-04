@@ -35,10 +35,11 @@ abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
-7pqrstsixteen`
+7pqrstsixteen
+sixrthreeseven74oneightssl`
 
-		desiredDecodedInput := []string{"29", "83", "13", "24", "42", "14", "76"}
-		want := 281
+		desiredDecodedInput := []int{29, 83, 13, 24, 42, 14, 76, 68}
+		want := 349
 
 		decodedInput := DecodeInput(input)
 		got := GetCalibration(decodedInput)
