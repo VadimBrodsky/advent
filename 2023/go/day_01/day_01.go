@@ -1,79 +1,70 @@
 package day01
 
 import (
-	"strconv"
 	"strings"
-	"unicode"
 )
 
-func DecodeInput(input string) []string {
+func DecodeInput(input string) []int {
 	codes := strings.Split(input, "\n")
+	decodedCodes := make([]int, len(codes)) 
 
-	for i, code := range codes {
-		codes[i] = replaceWordNumbers(code)
+	for i, c := range codes {
+		decodedCodes[i] = replaceWordNumbers(c)
 	}
 
-	var numbers []string
-
-	for _, code := range codes {
-		number := extractNumberFromString(code)
-		numbers = append(numbers, string(number))
-	}
-
-	return numbers
+	return decodedCodes
 }
 
-func GetCalibration(input []string) int {
+func SumCoordinates(input []int) int {
 	var sum int
 
-	for _, el := range input {
-		number, err := strconv.Atoi(el)
-
-		if err == nil {
-			sum += number
-		}
+	for _, number := range input {
+		sum += number
 	}
 
 	return sum
 }
 
-func extractNumberFromString(s string) []rune {
-	var digits []rune
-
-	for _, c := range s {
-		if !unicode.IsDigit(c) {
-			continue
-		}
-
-		if len(digits) == 2 {
-			digits[1] = c
-		} else {
-			digits = append(digits, c)
-		}
-	}
-
-	if len(digits) == 1 {
-		digits = append(digits, digits[0])
-	}
-
-	return digits
+var numberWords = map[string]int{
+	"1":     1,
+	"2":     2,
+	"3":     3,
+	"4":     4,
+	"5":     5,
+	"6":     6,
+	"7":     7,
+	"8":     8,
+	"9":     9,
+	"one":   1,
+	"two":   2,
+	"three": 3,
+	"four":  4,
+	"five":  5,
+	"six":   6,
+	"seven": 7,
+	"eight": 8,
+	"nine":  9,
 }
 
-var numberWords = map[string]string{
-	"one":   "1",
-	"two":   "2",
-	"three": "3",
-	"four":  "4",
-	"five":  "5",
-	"six":   "6",
-	"seven": "7",
-	"eight": "8",
-	"nine":  "9",
-}
+func replaceWordNumbers(s string) int {
+	var minDigit, maxDigit int
+	minIndex := len(s)
+	maxIndex := 0
 
-func replaceWordNumbers(s string) string {
 	for word, number := range numberWords {
-		s = strings.ReplaceAll(s, word, word + number)
+		min := strings.Index(s, word)
+		max := strings.LastIndex(s, word)
+
+		if min != -1 && min <= minIndex {
+			minIndex = min
+			minDigit = number
+		}
+
+		if max != -1 && max >= maxIndex {
+			maxIndex = max
+			maxDigit = number
+		}
 	}
-	return s
+
+	return minDigit*10 + maxDigit
 }
