@@ -18,7 +18,14 @@ func GetGames(games string, configuration map[string]int) []int {
 	parsedGames := parseGames(games)
 	var possibleGames []int
 
-	fmt.Printf("parsedGames %q\n\n", parsedGames)
+	for _, game := range parsedGames {
+		for k, v := range game {
+			fmt.Printf("k: %s v: %d\n", k, v)
+
+		}
+	}
+
+	fmt.Printf("parsedGames %v\n\n", parsedGames)
 	return possibleGames
 }
 
@@ -37,16 +44,17 @@ func parseGames(input string) []map[string]int {
 			return parsedGames
 		}
 
+		var gameR, gameG, gameB int
+
 		sets := strings.Split(cubesString, "; ")
 		for _, set := range sets {
 			r, g, b := parseSet(set)
-			parsedGames[i] = map[string]int {RED: r, GREEN: g, BLUE: b}
-			fmt.Printf("%d %d %d\n", r, g, b)
+			gameR += r
+			gameG += g
+			gameB += b
 		}
 
-		// fmt.Printf("game %s\n", game)
-		// fmt.Printf("cubesString %q, ok: %v\n", cubesString, ok)
-		fmt.Printf("sets %q\n", sets)
+		parsedGames[i] = map[string]int{RED: gameR, GREEN: gameG, BLUE: gameB}
 	}
 
 	return parsedGames
