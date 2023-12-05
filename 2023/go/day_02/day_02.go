@@ -32,40 +32,22 @@ func GetGames(games string, configuration map[string]int) []int {
 			}
 		}
 
-		// fmt.Printf("r%d g%d b%d\n", redSum, greenSum, blueSum)
-
-		for k, v := range configuration {
-			var isValid bool
-			fmt.Printf("conf: k %s v %d\n", k, v)
-
-			switch k {
-			case RED:
-				if v > redSum {
-					isValid = true
-				}
-			case GREEN:
-				if v > greenSum {
-					isValid = true
-				}
-			case BLUE:
-				if v > blueSum {
-					isValid = true
-				}
-			}
-
-			if isValid == true {
-				possibleGames = append(possibleGames, i + 1)
-			}
+		if (configuration[RED] >= redSum) && (configuration[BLUE] >= blueSum) && (configuration[GREEN] >= greenSum) {
+			possibleGames = append(possibleGames, i+1)
 		}
 	}
 
-	fmt.Printf("parsedGames %v\n", parsedGames)
-	fmt.Printf("possibleGames %v\n", possibleGames)
+	fmt.Printf("possibleGames \n", )
+
 	return possibleGames
 }
 
 func Sum(input []int) int {
-	return 0
+	var sum int
+	for _, v := range input {
+		sum += v
+	}
+	return sum
 }
 
 func parseGames(input string) []map[string]int {
@@ -80,7 +62,6 @@ func parseGames(input string) []map[string]int {
 		}
 
 		var gameR, gameG, gameB int
-
 		sets := strings.Split(cubesString, "; ")
 		for _, set := range sets {
 			r, g, b := parseSet(set)
