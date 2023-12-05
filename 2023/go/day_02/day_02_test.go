@@ -25,11 +25,11 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 		gotSumOfGames := Sum(gotPossibleGames)
 
 		if !slices.Equal(expectedPossibleGames, gotPossibleGames) {
-			t.Logf("expected %v, got %v", expectedPossibleGames, gotPossibleGames)
+			t.Errorf("expected %v, got %v", expectedPossibleGames, gotPossibleGames)
 		}
 
 		if expectedSum != gotSumOfGames {
-			t.Logf("expected %d, got %d", expectedSum, gotSumOfGames)
+			t.Errorf("expected %d, got %d", expectedSum, gotSumOfGames)
 		}
 	})
 }
