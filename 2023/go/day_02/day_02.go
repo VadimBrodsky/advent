@@ -18,14 +18,49 @@ func GetGames(games string, configuration map[string]int) []int {
 	parsedGames := parseGames(games)
 	var possibleGames []int
 
-	for _, game := range parsedGames {
-		for k, v := range game {
-			fmt.Printf("k: %s v: %d\n", k, v)
+	for i, game := range parsedGames {
+		var redSum, greenSum, blueSum int
 
+		for k, v := range game {
+			switch k {
+			case RED:
+				redSum += v
+			case GREEN:
+				greenSum += v
+			case BLUE:
+				blueSum += v
+			}
+		}
+
+		// fmt.Printf("r%d g%d b%d\n", redSum, greenSum, blueSum)
+
+		for k, v := range configuration {
+			var isValid bool
+			fmt.Printf("conf: k %s v %d\n", k, v)
+
+			switch k {
+			case RED:
+				if v > redSum {
+					isValid = true
+				}
+			case GREEN:
+				if v > greenSum {
+					isValid = true
+				}
+			case BLUE:
+				if v > blueSum {
+					isValid = true
+				}
+			}
+
+			if isValid == true {
+				possibleGames = append(possibleGames, i + 1)
+			}
 		}
 	}
 
-	fmt.Printf("parsedGames %v\n\n", parsedGames)
+	fmt.Printf("parsedGames %v\n", parsedGames)
+	fmt.Printf("possibleGames %v\n", possibleGames)
 	return possibleGames
 }
 
