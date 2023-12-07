@@ -20,7 +20,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 	}
 
 	t.Run("get correct sum of possible games for the sample input", func(t *testing.T) {
-		// t.Skip("")
 		expectedPossibleGames := []int{1, 2, 5}
 		expectedSum := 8
 
@@ -37,7 +36,6 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 	})
 
 	t.Run("get the sum of possible games for the full input", func(t *testing.T) {
-		// t.Skip("")
 		games, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)

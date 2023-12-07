@@ -35,12 +35,11 @@ func GetPossibleGames(games string, c Configuration) []int {
 	return possibleGames
 }
 
-func Sum(input []int) int {
-	var sum int
+func Sum(input []int) (sum int){
 	for _, v := range input {
 		sum += v
 	}
-	return sum
+	return 
 }
 
 func GetPowerSet(games string) []int {
