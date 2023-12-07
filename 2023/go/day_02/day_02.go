@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-type ParsedGame []map[string]int
+type ParsedGame [][]set
+type set map[string]int
 
 const (
 	RED   = "red"
@@ -19,25 +20,19 @@ func GetGames(games string, configuration map[string]int) []int {
 	var possibleGames []int
 
 	for i, game := range parsedGames {
-		var redSum, greenSum, blueSum int
 
-		for k, v := range game {
-			switch k {
-			case RED:
-				redSum += v
-			case GREEN:
-				greenSum += v
-			case BLUE:
-				blueSum += v
+		var validGame bool = true
+		for _, set := range game {
+			fmt.Printf("game %d, set %v \n", i, set)
+			if (configuration[RED] < set[RED]) || (configuration[BLUE] < set[BLUE]) || (configuration[GREEN] < set[GREEN]) {
+				validGame = false
 			}
 		}
 
-		if (configuration[RED] >= redSum) && (configuration[BLUE] >= blueSum) && (configuration[GREEN] >= greenSum) {
+		if validGame {
 			possibleGames = append(possibleGames, i+1)
 		}
 	}
-
-	fmt.Printf("possibleGames \n", )
 
 	return possibleGames
 }
@@ -50,8 +45,10 @@ func Sum(input []int) int {
 	return sum
 }
 
-func parseGames(input string) []map[string]int {
-	games := strings.Split(input, "\n")
+
+func parseGames(input string) ParsedGame {
+	trimmedInput := strings.TrimRight(input, "\n")
+	games := strings.Split(trimmedInput, "\n")
 	var parsedGames = make(ParsedGame, len(games))
 
 	for i, game := range games {
@@ -61,18 +58,14 @@ func parseGames(input string) []map[string]int {
 			return parsedGames
 		}
 
-		var gameR, gameG, gameB int
 		sets := strings.Split(cubesString, "; ")
+		var parsedSets []set
 		for _, set := range sets {
 			r, g, b := parseSet(set)
-			gameR += r
-			gameG += g
-			gameB += b
+			parsedSets = append(parsedSets, map[string]int{RED: r, GREEN: g, BLUE: b})
 		}
-
-		parsedGames[i] = map[string]int{RED: gameR, GREEN: gameG, BLUE: gameB}
+		parsedGames[i] = parsedSets
 	}
-
 	return parsedGames
 }
 
