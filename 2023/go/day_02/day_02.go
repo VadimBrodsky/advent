@@ -43,6 +43,29 @@ func Sum(input []int) int {
 	return sum
 }
 
+func GetPowerSet(games string) []int {
+	parsedGames := parseGames(games)
+	powerSets := make([]int, len(parsedGames))
+
+	for i, game := range parsedGames {
+		var maxR, maxG, maxB int
+		for _, set := range game {
+			if set[RED] > maxR {
+				maxR = set[RED]
+			}
+			if set[GREEN] > maxG {
+				maxG = set[GREEN]
+			}
+			if set[BLUE] > maxB {
+				maxB = set[BLUE]
+			}
+		}
+		powerSets[i] = maxR * maxG * maxB
+	}
+
+	return powerSets
+}
+
 func parseGames(input string) ParsedGame {
 	trimmedInput := strings.TrimRight(input, "\n")
 	games := strings.Split(trimmedInput, "\n")
