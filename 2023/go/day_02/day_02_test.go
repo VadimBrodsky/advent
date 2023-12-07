@@ -1,7 +1,6 @@
 package day02
 
 import (
-	"fmt"
 	"os"
 	"slices"
 	"testing"
@@ -9,7 +8,7 @@ import (
 
 func TestDay02(t *testing.T) {
 	t.Run("get correct sum of possible games for the sample input", func(t *testing.T) {
-		t.Skip("")
+		// t.Skip("")
 		games := `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -24,7 +23,7 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 		expectedPossibleGames := []int{1, 2, 5}
 		expectedSum := 8
 
-		gotPossibleGames := GetGames(games, bagConfiguration)
+		gotPossibleGames := GetPossibleGames(games, bagConfiguration)
 		gotSumOfGames := Sum(gotPossibleGames)
 
 		if !slices.Equal(expectedPossibleGames, gotPossibleGames) {
@@ -49,8 +48,7 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green`
 		}
 
 		want := 2683
-		possibleGames := GetGames(string(games), bagConfiguration)
-		fmt.Printf("possibleGames %v\n", possibleGames)
+		possibleGames := GetPossibleGames(string(games), bagConfiguration)
 		got := Sum(possibleGames)
 
 		if want != got {

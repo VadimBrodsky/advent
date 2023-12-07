@@ -1,13 +1,13 @@
 package day02
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
 
-type ParsedGame [][]set
-type set map[string]int
+type ParsedGame [][]Set
+type Set map[string]int
+type Configuration map[string]int
 
 const (
 	RED   = "red"
@@ -15,16 +15,14 @@ const (
 	BLUE  = "blue"
 )
 
-func GetGames(games string, configuration map[string]int) []int {
-	parsedGames := parseGames(games)
+func GetPossibleGames(games string, c Configuration) []int {
 	var possibleGames []int
+	parsedGames := parseGames(games)
 
 	for i, game := range parsedGames {
-
 		var validGame bool = true
 		for _, set := range game {
-			fmt.Printf("game %d, set %v \n", i, set)
-			if (configuration[RED] < set[RED]) || (configuration[BLUE] < set[BLUE]) || (configuration[GREEN] < set[GREEN]) {
+			if (c[RED] < set[RED]) || (c[BLUE] < set[BLUE]) || (c[GREEN] < set[GREEN]) {
 				validGame = false
 			}
 		}
@@ -45,7 +43,6 @@ func Sum(input []int) int {
 	return sum
 }
 
-
 func parseGames(input string) ParsedGame {
 	trimmedInput := strings.TrimRight(input, "\n")
 	games := strings.Split(trimmedInput, "\n")
@@ -59,10 +56,10 @@ func parseGames(input string) ParsedGame {
 		}
 
 		sets := strings.Split(cubesString, "; ")
-		var parsedSets []set
+		var parsedSets []Set
 		for _, set := range sets {
 			r, g, b := parseSet(set)
-			parsedSets = append(parsedSets, map[string]int{RED: r, GREEN: g, BLUE: b})
+			parsedSets = append(parsedSets, Set{RED: r, GREEN: g, BLUE: b})
 		}
 		parsedGames[i] = parsedSets
 	}
