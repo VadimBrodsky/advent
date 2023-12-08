@@ -3,6 +3,7 @@ package day03
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -30,10 +31,13 @@ func GetParts(input string) (usedParts []int) {
 	schematic.allParts = schematic.Parse(`\d+`)
 
 	used := schematic.FindAdjacent()
-
-	// fmt.Printf("parts: %v\n", schematic.allParts)
-	// fmt.Printf("symbols: %v\n", schematic.symbols)
 	fmt.Printf("used: %v\n", used)
+
+	for _, p := range used {
+		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {
+			usedParts = append(usedParts, int(s))
+		}
+	}
 
 	return
 }
@@ -74,10 +78,20 @@ func (s Schematic) Parse(pattern string) (parts []Part) {
 
 func (s Schematic) FindAdjacent() (foundParts []Part) {
 	for _, p := range s.allParts {
-		fmt.Printf("{ x: %d, y: %d, length: %d, value: %s }\n", p.point.x, p.point.y, p.length, p.value)
 		points := getAdjacentPoints(p)
-		fmt.Printf("Points: %v\n", points)
 
+		var isAdjacentSymbol bool
+		for _, point := range points {
+			for _, symbol := range s.symbols {
+				if point.isEqual(symbol.point) {
+					isAdjacentSymbol = true
+				}
+			}
+		}
+
+		if isAdjacentSymbol {
+			foundParts = append(foundParts, p)
+		}
 	}
 	return
 }
@@ -95,4 +109,8 @@ func getAdjacentPoints(p Part) (points []Point) {
 		}
 	}
 	return
+}
+
+func (p Point) isEqual(anotherPoint Point) bool {
+	return p.x == anotherPoint.x && p.y == anotherPoint.y
 }
