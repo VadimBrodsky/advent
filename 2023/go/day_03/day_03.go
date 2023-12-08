@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-	"unicode"
 )
 
 type Schematic struct {
@@ -14,15 +13,15 @@ type Schematic struct {
 
 type Part struct {
 	value string
+	y     int
 	x1    int
 	x2    int
-	y     int
 }
 
 type Symbol struct {
-	x     int
-	y     int
 	value string
+	y     int
+	x     int
 }
 
 func GetParts(input string) (usedParts []int) {
@@ -50,30 +49,28 @@ func NewSchematic(input string) Schematic {
 }
 
 func (s Schematic) Parse(del string) (parts []Part, symbols []Symbol) {
-	for x, line := range s.lines {
-		// fmt.Printf("line %d: %s \n", i, line)
+	for y, line := range s.lines {
+		symbolPattern := regexp.MustCompile(`[^.\d]+`)
+		symbolsMatched := symbolPattern.FindAllString(line, -1)
+		symbolsIndex := symbolPattern.FindAllStringIndex(line, -1)
 
-		for y, char := range line {
-			// fmt.Printf("%s", string(char))
-
-			if string(char) != del && !unicode.IsNumber(char) {
-				symbol := Symbol{x: x, y: y, value: string(char)}
-				symbols = append(symbols, symbol)
-			}
-
-			numberPatter := regexp.MustCompile(`\d+`)
-			matches := numberPatter.FindIndex([]byte(line))
-
-			fmt.Printf("matches: %v\n", matches)
-
-			if unicode.IsNumber(char) {
-				part := Part{value: string(char), x1: x, x2: x, y: y}
-				parts = append(parts, part)
+		if len(symbolsIndex) != 0 && len(symbolsMatched) != 0 {
+			for i, el := range symbolsIndex {
+				s := Symbol{x: el[0], y: y, value: symbolsMatched[i]}
+				symbols = append(symbols, s)
 			}
 		}
 
-		fmt.Printf("\n")
-	}
+		numberPattern := regexp.MustCompile(`\d+`)
+		numbersMatched := numberPattern.FindAllString(line, -1)
+		numbersIndex := numberPattern.FindAllStringIndex(line, -1)
 
+		if len(numbersIndex) != 0 && len(numbersMatched) != 0 {
+			for i, el := range numbersIndex {
+				p := Part{x1: el[0], x2: el[1] - 1, y: y, value: numbersMatched[i]}
+				parts = append(parts, p)
+			}
+		}
+	}
 	return
 }
