@@ -1,7 +1,6 @@
 package day03
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -31,7 +30,6 @@ func GetParts(input string) (usedParts []int) {
 	schematic.allParts = schematic.Parse(`\d+`)
 
 	used := schematic.FindAdjacent()
-	fmt.Printf("used: %v\n", used)
 
 	for _, p := range used {
 		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {

@@ -1,6 +1,7 @@
 package day03
 
 import (
+	"os"
 	"slices"
 	"testing"
 )
@@ -17,7 +18,7 @@ func TestDay03(t *testing.T) {
 ...$.*....
 .664.598..`
 
-	t.Run("get the correct sum for engine part numbers for the sample output", func(t *testing.T) {
+	t.Run("get the correct sum for engine part numbers for the sample input", func(t *testing.T) {
 		expectedPartNumbers := []int{467, 35, 633, 617, 592, 755, 664, 598}
 		expectedSum := 4361
 
@@ -33,4 +34,19 @@ func TestDay03(t *testing.T) {
 		}
 	})
 
+	t.Run("get the correct sum for engine part numbers for the full input", func(t *testing.T) {
+		schematic, err := os.ReadFile("input.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expectedSum := 522726
+
+		gotPartNumbers := GetParts(string(schematic))
+		gotSum := Sum(gotPartNumbers)
+
+		if expectedSum != gotSum {
+			t.Errorf("expected sum %d, got %d", expectedSum, gotSum)
+		}
+	})
 }
