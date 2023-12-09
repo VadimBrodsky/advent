@@ -49,11 +49,8 @@ func NewSchematic(input string) Schematic {
 
 func (s Schematic) GetParts() (usedParts []int) {
 	used := s.FindAdjacentParts()
-
 	for _, p := range used {
-		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {
-			usedParts = append(usedParts, int(s))
-		}
+		usedParts = append(usedParts, p.ToInt())
 	}
 
 	return
@@ -125,7 +122,6 @@ func (s Schematic) GetGearRatio(gearSymbol string) int {
 			ratios = append(ratios, ratio)
 		}
 	}
-
 	return Sum(ratios)
 }
 
