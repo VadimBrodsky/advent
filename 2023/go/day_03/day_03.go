@@ -101,24 +101,32 @@ func (p Part) isAdjacent(points []Point) (adjacent bool) {
 	return
 }
 
-func (s Schematic) GetGearRatio(gearSymbol string) (ratio int) {
+func (s Schematic) GetGearRatio(gearSymbol string) int {
 	var gears []Gear
 	for _, symbol := range s.symbols {
-		if symbol.value == gearSymbol {
+		if fmt.Sprint(symbol.value) == gearSymbol {
 			gears = append(gears, Gear{symbol: symbol, parts: []Part{}})
 		}
 	}
-	fmt.Printf("Gears: %v\n", gears)
 
-	for _, gear := range gears {
-		gear.symbol.GetAdjacentPoints()
-
-		// for _, part := range s.parts {
-		//
-		// }
+	for i, gear := range gears {
+		for _, part := range s.parts {
+			adjacent := gear.symbol.isAdjacent(part.GetAdjacentPoints())
+			if adjacent {
+				gears[i].parts = append(gears[i].parts, part)
+			}
+		}
 	}
 
-	return
+	var ratios []int
+	for _, gear := range gears {
+		if len(gear.parts) == 2 {
+			ratio := gear.parts[0].ToInt() * gear.parts[1].ToInt()
+			ratios = append(ratios, ratio)
+		}
+	}
+
+	return Sum(ratios)
 }
 
 func (p Part) GetAdjacentPoints() (points []Point) {
@@ -134,6 +142,14 @@ func (p Part) GetAdjacentPoints() (points []Point) {
 		}
 	}
 	return
+}
+
+func (p Part) ToInt() int {
+	parsedInt, err := strconv.ParseInt(p.value, 10, 32)
+	if err != nil {
+		return 0
+	}
+	return int(parsedInt)
 }
 
 func (p Point) isEqual(anotherPoint Point) bool {

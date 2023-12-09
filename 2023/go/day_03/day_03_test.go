@@ -62,4 +62,20 @@ func TestDay03(t *testing.T) {
 			t.Errorf("expected sum %d, got %d", expectedGearRatio, gotGearRatio)
 		}
 	})
+
+	t.Run("get the correct gear ration for the full input", func(t *testing.T) {
+		schematic, err := os.ReadFile("input.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expectedGearRatio := 81721933
+
+		s := NewSchematic(string(schematic))
+		gotGearRatio := s.GetGearRatio("*")
+
+		if expectedGearRatio != gotGearRatio {
+			t.Errorf("expected sum %d, got %d", expectedGearRatio, gotGearRatio)
+		}
+	})
 }
