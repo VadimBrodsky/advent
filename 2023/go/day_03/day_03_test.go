@@ -56,7 +56,7 @@ func TestDay03(t *testing.T) {
 		expectedGearRatio := 467835
 
 		s := NewSchematic(sampleSchematic)
-		gotGearRatio := s.GetGearRatio()
+		gotGearRatio := s.GetGearRatio("*")
 
 		if expectedGearRatio != gotGearRatio {
 			t.Errorf("expected sum %d, got %d", expectedGearRatio, gotGearRatio)

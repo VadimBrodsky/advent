@@ -1,22 +1,28 @@
 package day03
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
 type Schematic struct {
-	input    string
-	lines    []string
-	allParts []Part
-	symbols  []Part
+	input   string
+	lines   []string
+	parts   []Part
+	symbols []Part
 }
 
 type Part struct {
 	point  Point
 	length int
 	value  string
+}
+
+type Gear struct {
+	symbol Part
+	parts  []Part
 }
 
 type Point struct {
@@ -37,12 +43,12 @@ func NewSchematic(input string) Schematic {
 		lines: strings.Split(input, "\n"),
 	}
 	s.symbols = s.Parse(`[^.\d]+`)
-	s.allParts = s.Parse(`\d+`)
+	s.parts = s.Parse(`\d+`)
 	return s
 }
 
 func (s Schematic) GetParts() (usedParts []int) {
-	used := s.FindAdjacent()
+	used := s.FindAdjacentParts()
 
 	for _, p := range used {
 		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {
@@ -73,29 +79,46 @@ func (s Schematic) Parse(pattern string) (parts []Part) {
 	return
 }
 
-func (s Schematic) FindAdjacent() (foundParts []Part) {
-	for _, part := range s.allParts {
-		points := part.GetAdjacentPoints()
-
-		var isAdjacentSymbol bool
+func (s Schematic) FindAdjacentParts() (foundParts []Part) {
+	for _, part := range s.parts {
+		var isAdjacentPart bool
 		for _, symbol := range s.symbols {
-			for _, point := range points {
-				if point.isEqual(symbol.point) {
-					isAdjacentSymbol = true
-				}
+			isAdjacentPart = symbol.isAdjacent(part.GetAdjacentPoints())
+			if isAdjacentPart {
+				foundParts = append(foundParts, part)
 			}
-		}
-
-		if isAdjacentSymbol {
-			foundParts = append(foundParts, part)
 		}
 	}
 	return
 }
 
-func (s Schematic) GetGearRatio() (ratio int) {
-	ratio = 467835
-	return ratio
+func (p Part) isAdjacent(points []Point) (adjacent bool) {
+	for _, point := range points {
+		if point.isEqual(p.point) {
+			adjacent = true
+		}
+	}
+	return
+}
+
+func (s Schematic) GetGearRatio(gearSymbol string) (ratio int) {
+	var gears []Gear
+	for _, symbol := range s.symbols {
+		if symbol.value == gearSymbol {
+			gears = append(gears, Gear{symbol: symbol, parts: []Part{}})
+		}
+	}
+	fmt.Printf("Gears: %v\n", gears)
+
+	for _, gear := range gears {
+		gear.symbol.GetAdjacentPoints()
+
+		// for _, part := range s.parts {
+		//
+		// }
+	}
+
+	return
 }
 
 func (p Part) GetAdjacentPoints() (points []Point) {
