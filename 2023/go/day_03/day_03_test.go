@@ -22,7 +22,8 @@ func TestDay03(t *testing.T) {
 		expectedPartNumbers := []int{467, 35, 633, 617, 592, 755, 664, 598}
 		expectedSum := 4361
 
-		gotPartNumbers := GetParts(sampleSchematic)
+		s := NewSchematic(sampleSchematic)
+		gotPartNumbers := s.GetParts()
 		gotSum := Sum(gotPartNumbers)
 
 		if !slices.Equal(expectedPartNumbers, gotPartNumbers) {
@@ -42,11 +43,23 @@ func TestDay03(t *testing.T) {
 
 		expectedSum := 522726
 
-		gotPartNumbers := GetParts(string(schematic))
+		s := NewSchematic(string(schematic))
+		gotPartNumbers := s.GetParts()
 		gotSum := Sum(gotPartNumbers)
 
 		if expectedSum != gotSum {
 			t.Errorf("expected sum %d, got %d", expectedSum, gotSum)
+		}
+	})
+
+	t.Run("get the correct gear ration for the sample input", func(t *testing.T) {
+		expectedGearRatio := 467835
+
+		s := NewSchematic(sampleSchematic)
+		gotGearRatio := s.GetGearRatio()
+
+		if expectedGearRatio != gotGearRatio {
+			t.Errorf("expected sum %d, got %d", expectedGearRatio, gotGearRatio)
 		}
 	})
 }

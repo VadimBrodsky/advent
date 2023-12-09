@@ -24,22 +24,6 @@ type Point struct {
 	y int
 }
 
-func GetParts(input string) (usedParts []int) {
-	schematic := NewSchematic(input)
-	schematic.symbols = schematic.Parse(`[^.\d]+`)
-	schematic.allParts = schematic.Parse(`\d+`)
-
-	used := schematic.FindAdjacent()
-
-	for _, p := range used {
-		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {
-			usedParts = append(usedParts, int(s))
-		}
-	}
-
-	return
-}
-
 func Sum(a []int) (sum int) {
 	for _, e := range a {
 		sum += e
@@ -48,10 +32,25 @@ func Sum(a []int) (sum int) {
 }
 
 func NewSchematic(input string) Schematic {
-	return Schematic{
+	s := Schematic{
 		input: input,
 		lines: strings.Split(input, "\n"),
 	}
+	s.symbols = s.Parse(`[^.\d]+`)
+	s.allParts = s.Parse(`\d+`)
+	return s
+}
+
+func (s Schematic) GetParts() (usedParts []int) {
+	used := s.FindAdjacent()
+
+	for _, p := range used {
+		if s, err := strconv.ParseInt(p.value, 10, 32); err == nil {
+			usedParts = append(usedParts, int(s))
+		}
+	}
+
+	return
 }
 
 func (s Schematic) Parse(pattern string) (parts []Part) {
@@ -75,12 +74,12 @@ func (s Schematic) Parse(pattern string) (parts []Part) {
 }
 
 func (s Schematic) FindAdjacent() (foundParts []Part) {
-	for _, p := range s.allParts {
-		points := getAdjacentPoints(p)
+	for _, part := range s.allParts {
+		points := part.GetAdjacentPoints()
 
 		var isAdjacentSymbol bool
-		for _, point := range points {
-			for _, symbol := range s.symbols {
+		for _, symbol := range s.symbols {
+			for _, point := range points {
 				if point.isEqual(symbol.point) {
 					isAdjacentSymbol = true
 				}
@@ -88,13 +87,18 @@ func (s Schematic) FindAdjacent() (foundParts []Part) {
 		}
 
 		if isAdjacentSymbol {
-			foundParts = append(foundParts, p)
+			foundParts = append(foundParts, part)
 		}
 	}
 	return
 }
 
-func getAdjacentPoints(p Part) (points []Point) {
+func (s Schematic) GetGearRatio() (ratio int) {
+	ratio = 467835
+	return ratio
+}
+
+func (p Part) GetAdjacentPoints() (points []Point) {
 	for x := p.point.x - 1; x <= p.point.x+p.length; x++ {
 		for y := p.point.y - 1; y <= p.point.y+1; y++ {
 			if y == p.point.y && x >= p.point.x && x < p.point.x+p.length {
