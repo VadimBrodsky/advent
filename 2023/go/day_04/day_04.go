@@ -14,6 +14,8 @@ type Card struct {
 
 type Cards []Card
 
+type NumberOfCards []int
+
 func newCards(s string) (cards Cards) {
 	cardsStrings := strings.Split(s, "\n")
 	for _, c := range cardsStrings {
@@ -69,6 +71,17 @@ func (c Cards) GetScore() (score int) {
 	points := c.GetPoints()
 	for _, point := range points {
 		score += point
+	}
+	return
+}
+
+func (c Cards) GetTotalScratchCards() (num NumberOfCards ){
+	return
+}
+
+func (cards NumberOfCards) Sum() (s int) {
+	for _, n := range cards {
+		s += n
 	}
 	return
 }

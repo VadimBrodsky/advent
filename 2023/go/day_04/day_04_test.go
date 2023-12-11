@@ -63,4 +63,21 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11`
 			t.Errorf("want %v, got %v", wantScore, gotScore)
 		}
 	})
+
+	t.Run("get the number of scratchcards for the sample input", func(t *testing.T) {
+		wantTotalCards := []int{1, 2, 4, 8, 14, 1}
+		wantSumOfCards := 30
+
+		cards := newCards(sampleScratchCards)
+		gotScratchCards := cards.GetTotalScratchCards()
+		gotSumOfCards := gotScratchCards.Sum()
+
+		if !slices.Equal(wantTotalCards, gotScratchCards) {
+			t.Errorf("want %v got %v", wantTotalCards, gotScratchCards)
+		}
+
+		if wantSumOfCards != gotSumOfCards {
+			t.Errorf("want %v got %v", wantSumOfCards, gotSumOfCards)
+		}
+	})
 }
