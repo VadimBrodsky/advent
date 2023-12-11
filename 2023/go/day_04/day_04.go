@@ -2,6 +2,7 @@ package day04
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -25,7 +26,6 @@ func newCards(s string) (cards Cards) {
 		})
 	}
 
-	fmt.Printf("Cards: %v\n", cards)
 	return
 }
 
@@ -45,20 +45,42 @@ func (cards Cards) GetWinningNumbers() (winningNumbers [][]int) {
 }
 
 func (c Cards) GetPoints() (points []int) {
+	winningNumbers := c.GetWinningNumbers()
+
+	for _, game := range winningNumbers {
+		var pointsForGame int
+		for i := range game {
+			switch i {
+			case 0:
+				pointsForGame = 1
+			case 1:
+				pointsForGame = 2
+			default:
+				pointsForGame *= 2
+			}
+		}
+		points = append(points, pointsForGame)
+
+	}
 	return
 }
 
 func (c Cards) GetScore() (score int) {
+	points := c.GetPoints()
+	for _, point := range points {
+		score += point
+	}
 	return
 }
 
 func parseNumbers(numberString string) (numbers []int) {
-	numberSlice := strings.Split(numberString, " ")
-	for _, s := range numberSlice {
+	re := regexp.MustCompile(`\d+`)
+	numberSlice := re.FindAllString(numberString, -1)
 
+	for _, s := range numberSlice {
 		parsedInt, err := strconv.ParseInt(s, 10, 32)
 		if err != nil {
-			numbers = append(numbers, 0)
+			fmt.Printf("cannot parse number %q\n", s)
 		}
 		numbers = append(numbers, int(parsedInt))
 	}
