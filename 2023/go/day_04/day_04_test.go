@@ -16,7 +16,6 @@ Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11`
 
 	t.Run("get the correct points ans cores for the sample input", func(t *testing.T) {
-		t.Skip("")
 		wantWinningNumbers := [][]int{
 			{48, 83, 17, 86},
 			{32, 61},
@@ -51,7 +50,6 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11`
 	})
 
 	t.Run("get the correct score for the full output", func(t *testing.T) {
-		t.Skip("")
 		scratchCards, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
@@ -77,6 +75,22 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11`
 		if !slices.Equal(wantTotalCards, gotScratchCards) {
 			t.Errorf("want %v got %v", wantTotalCards, gotScratchCards)
 		}
+
+		if wantSumOfCards != gotSumOfCards {
+			t.Errorf("want %v got %v", wantSumOfCards, gotSumOfCards)
+		}
+	})
+
+	t.Run("get the number of scratchcards for the full input", func(t *testing.T) {
+		scratchCards, err := os.ReadFile("input.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		wantSumOfCards := 5744979
+		cards := newCards(string(scratchCards))
+		gotScratchCards := cards.GetTotalScratchCards()
+		gotSumOfCards := gotScratchCards.Sum()
 
 		if wantSumOfCards != gotSumOfCards {
 			t.Errorf("want %v got %v", wantSumOfCards, gotSumOfCards)

@@ -11,6 +11,7 @@ type Card struct {
 	numbers        []int
 	winningNumbers []int
 	wins           int
+	copies         int
 }
 
 type Cards []Card
@@ -18,15 +19,17 @@ type Cards []Card
 type NumberOfCards []int
 
 func newCards(s string) (cards Cards) {
+	s = strings.TrimSpace(s)
 	cardsStrings := strings.Split(s, "\n")
 
 	for _, c := range cardsStrings {
 		_, numbers, _ := strings.Cut(c, ": ")
-		n, wn, _ := strings.Cut(numbers, "|")
+		wn, n, _ := strings.Cut(numbers, "|")
 
 		cards = append(cards, Card{
-			numbers:        parseNumbers(n),
 			winningNumbers: parseNumbers(wn),
+			numbers:        parseNumbers(n),
+			copies:         1,
 		})
 	}
 
@@ -34,7 +37,7 @@ func newCards(s string) (cards Cards) {
 }
 
 func (cards Cards) GetWinningNumbers() (winningNumbers [][]int) {
-	for _, card := range cards {
+	for i, card := range cards {
 		var winningNumbersForCard []int
 		for _, wn := range card.winningNumbers {
 			for _, n := range card.numbers {
@@ -44,6 +47,7 @@ func (cards Cards) GetWinningNumbers() (winningNumbers [][]int) {
 			}
 		}
 		winningNumbers = append(winningNumbers, winningNumbersForCard)
+		cards[i].wins = len(winningNumbersForCard)
 	}
 	return
 }
@@ -80,16 +84,17 @@ func (c Cards) GetScore() (score int) {
 func (cards Cards) GetTotalScratchCards() (num NumberOfCards) {
 	winningCards := cards.GetWinningNumbers()
 
-	for i := range cards {
-		cards[i].wins += 1
-
-		for j := i + 1; j < i+1+len(winningCards[i]); j++ {
-			cards[j].wins += 1
+	for i := 0; i < len(cards); i++ {
+		for copy := 0; copy < cards[i].copies; copy++ {
+			for j := i + 1; j < len(winningCards[i])+i+1; j++ {
+				cards[j].copies += 1
+			}
 		}
-		// fmt.Printf("%v, %d\n", c, nWins)
 	}
 
-	fmt.Printf("%v\n", cards)
+	for _, card := range cards {
+		num = append(num, card.copies)
+	}
 	return
 }
 
@@ -101,7 +106,7 @@ func (cards NumberOfCards) Sum() (s int) {
 }
 
 func (c Card) String() string {
-	return fmt.Sprintf("numbers: %v, winningNumbers: %v, wins: %d\n", c.numbers, c.winningNumbers, c.wins)
+	return fmt.Sprintf("wn: %v, n: %v, w: %d, c: %d\n", c.winningNumbers, c.numbers, c.wins, c.copies)
 }
 
 func parseNumbers(numberString string) (numbers []int) {
