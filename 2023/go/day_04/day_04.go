@@ -10,7 +10,7 @@ import (
 type Card struct {
 	numbers        []int
 	winningNumbers []int
-	wins           int
+	matches        []int
 	copies         int
 }
 
@@ -32,32 +32,35 @@ func newCards(s string) (cards Cards) {
 			copies:         1,
 		})
 	}
-
+	cards.ParseMatches()
 	return
 }
 
-func (cards Cards) GetWinningNumbers() (winningNumbers [][]int) {
+func (cards Cards) ParseMatches() {
 	for i, card := range cards {
 		var winningNumbersForCard []int
 		for _, wn := range card.winningNumbers {
 			for _, n := range card.numbers {
 				if n == wn {
+					cards[i].matches = append(cards[i].matches, wn)
 					winningNumbersForCard = append(winningNumbersForCard, wn)
 				}
 			}
 		}
-		winningNumbers = append(winningNumbers, winningNumbersForCard)
-		cards[i].wins = len(winningNumbersForCard)
+	}
+}
+
+func (cards Cards) GetWinningNumbers() (winningNumbers [][]int) {
+	for _, c := range cards {
+		winningNumbers = append(winningNumbers, c.matches)
 	}
 	return
 }
 
-func (c Cards) GetPoints() (points []int) {
-	winningNumbers := c.GetWinningNumbers()
-
-	for _, game := range winningNumbers {
+func (cards Cards) GetPoints() (points []int) {
+	for _, card := range cards {
 		var pointsForGame int
-		for i := range game {
+		for i := range card.matches {
 			switch i {
 			case 0:
 				pointsForGame = 1
@@ -82,11 +85,9 @@ func (c Cards) GetScore() (score int) {
 }
 
 func (cards Cards) GetTotalScratchCards() (num NumberOfCards) {
-	winningCards := cards.GetWinningNumbers()
-
 	for i := 0; i < len(cards); i++ {
 		for copy := 0; copy < cards[i].copies; copy++ {
-			for j := i + 1; j < len(winningCards[i])+i+1; j++ {
+			for j := i + 1; j < len(cards[i].matches)+i+1; j++ {
 				cards[j].copies += 1
 			}
 		}
@@ -106,7 +107,7 @@ func (cards NumberOfCards) Sum() (s int) {
 }
 
 func (c Card) String() string {
-	return fmt.Sprintf("wn: %v, n: %v, w: %d, c: %d\n", c.winningNumbers, c.numbers, c.wins, c.copies)
+	return fmt.Sprintf("wn: %v, n: %v, c: %d\n", c.winningNumbers, c.numbers, c.copies)
 }
 
 func parseNumbers(numberString string) (numbers []int) {
@@ -120,6 +121,5 @@ func parseNumbers(numberString string) (numbers []int) {
 		}
 		numbers = append(numbers, int(parsedInt))
 	}
-
 	return
 }
