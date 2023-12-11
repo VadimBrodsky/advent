@@ -10,6 +10,7 @@ import (
 type Card struct {
 	numbers        []int
 	winningNumbers []int
+	wins           int
 }
 
 type Cards []Card
@@ -18,6 +19,7 @@ type NumberOfCards []int
 
 func newCards(s string) (cards Cards) {
 	cardsStrings := strings.Split(s, "\n")
+
 	for _, c := range cardsStrings {
 		_, numbers, _ := strings.Cut(c, ": ")
 		n, wn, _ := strings.Cut(numbers, "|")
@@ -75,7 +77,19 @@ func (c Cards) GetScore() (score int) {
 	return
 }
 
-func (c Cards) GetTotalScratchCards() (num NumberOfCards ){
+func (cards Cards) GetTotalScratchCards() (num NumberOfCards) {
+	winningCards := cards.GetWinningNumbers()
+
+	for i := range cards {
+		cards[i].wins += 1
+
+		for j := i + 1; j < i+1+len(winningCards[i]); j++ {
+			cards[j].wins += 1
+		}
+		// fmt.Printf("%v, %d\n", c, nWins)
+	}
+
+	fmt.Printf("%v\n", cards)
 	return
 }
 
@@ -84,6 +98,10 @@ func (cards NumberOfCards) Sum() (s int) {
 		s += n
 	}
 	return
+}
+
+func (c Card) String() string {
+	return fmt.Sprintf("numbers: %v, winningNumbers: %v, wins: %d\n", c.numbers, c.winningNumbers, c.wins)
 }
 
 func parseNumbers(numberString string) (numbers []int) {
