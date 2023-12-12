@@ -30,16 +30,21 @@ func (m Mappings) String() (s string) {
 }
 
 func NewAlmanac(input string) (m Mapping) {
-  line := strings.ReplaceAll(input, "\n", " ")
-	line = strings.ReplaceAll(line, " map", "")
-	line = strings.ReplaceAll(line, " s", "\ns")
-	line = strings.ReplaceAll(line, " f", "\nf")
-	line = strings.ReplaceAll(line, " w", "\nw")
-	line = strings.ReplaceAll(line, " t", "\nt")
-	line = strings.ReplaceAll(line, " h", "\nh")
-	line = strings.ReplaceAll(line, " l", "\nl")
-	parts := strings.Split(line, "\n")
+	replacements := map[string]string{
+		"\n":   " ",
+		" map": "",
+		" s":   "\ns",
+		" f":   "\nf",
+		" w":   "\nw",
+		" t":   "\nt",
+		" h":   "\nh",
+		" l":   "\nl",
+	}
+  for old, new := range replacements {
+    input = strings.ReplaceAll(input, old, new)
+  }
 
+	parts := strings.Split(input, "\n")
 	fmt.Printf("%q", parts)
 	return
 }
