@@ -2,6 +2,7 @@ package day05
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -51,7 +52,7 @@ const (
 type Mappings []Mapping
 
 func NewAlmanac(input string) (al Almanac) {
-	input = replaceAll(input, map[string]string{
+	replacedInput := replaceAll(input, map[string]string{
 		"\n":   " ",
 		" map": "",
 		" s":   "\ns",
@@ -61,17 +62,46 @@ func NewAlmanac(input string) (al Almanac) {
 		" h":   "\nh",
 		" l":   "\nl",
 	})
-	lines := strings.Split(input, "\n")
+	lines := strings.Split(replacedInput, "\n")
 	al = parseCategories(lines)
 	return
 }
 
 func (al Almanac) GetMappings() (mappings Mappings) {
+	for _, seed := range al.seeds {
+		soil := al.seedToSoil.MatchAll(seed)
+		fertilizer := al.soilToFertilizer.MatchAll(soil)
+		water := al.fertilizerToWater.MatchAll(fertilizer)
+		light := al.waterToLight.MatchAll(water)
+		temperature := al.lightToTemperature.MatchAll(light)
+		humidity := al.temperatureToHumidity.MatchAll(temperature)
+		location := al.humidityToLocation.MatchAll(humidity)
+
+		mappings = append(mappings, Mapping{
+			seed:        seed,
+			soil:        soil,
+			fertilizer:  fertilizer,
+			water:       water,
+			light:       light,
+			temperature: temperature,
+			humidity:    humidity,
+			location:    location,
+		})
+	}
 	return
 }
 
 func (al Almanac) GetLowestLocation() (location int) {
-	return location
+	mappings := al.GetMappings()
+	location = math.MaxInt
+
+	for _, m := range mappings {
+		if m.location < location {
+			location = m.location
+		}
+	}
+
+	return
 }
 
 func (m Mapping) String() string {
@@ -157,4 +187,28 @@ func parseCategories(lines []string) (al Almanac) {
 		}
 	}
 	return
+}
+
+func (r Relations) MatchAll(i int) (matched int) {
+	for _, relation := range r {
+		matched = relation.Match(i)
+
+		// break as soon as we get a match
+		if matched != 0 && matched != i {
+			break
+		}
+	}
+	return
+
+}
+
+func (rel Relation) Match(input int) (matched int) {
+	if input >= rel.from && input <= rel.from+rel.length {
+		diff := input - rel.from
+		diff = int(math.Abs(float64(diff)))
+		m := rel.to + diff
+
+		return m
+	}
+	return input
 }

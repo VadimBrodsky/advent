@@ -51,7 +51,7 @@ humidity-to-location map:
 		gotLowestLocation := almanac.GetLowestLocation()
 
 		if wantMapping.String() != gotMapping.String() {
-			t.Errorf("expected %v, got %v", wantMapping, gotMapping)
+			t.Errorf("expected \n%v, got \n%v", wantMapping, gotMapping)
 		}
 
 		if wantLowestLocation != gotLowestLocation {
