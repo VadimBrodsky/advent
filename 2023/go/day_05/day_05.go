@@ -38,6 +38,8 @@ type Almanac struct {
 	humidityToLocation    Relations
 }
 
+type Mappings []Mapping
+
 const (
 	seeds = "seeds"
 	s2s   = "seed-to-soil"
@@ -48,8 +50,6 @@ const (
 	t2h   = "temperature-to-humidity"
 	h2l   = "humidity-to-location"
 )
-
-type Mappings []Mapping
 
 func NewAlmanac(input string) (al Almanac) {
 	input = strings.ReplaceAll(input, "\n", " ")
@@ -100,18 +100,6 @@ func (al Almanac) GetLowestLocation() (location int) {
 			location = m.location
 		}
 	}
-
-	return
-}
-
-func (m Mapping) String() string {
-	return fmt.Sprintf("{seed: %d, soil: %d, fertilizer: %d, water: %d, light: %d, temperature: %d, humidity: %d, location: %d}", m.seed, m.soil, m.fertilizer, m.water, m.light, m.temperature, m.humidity, m.location)
-}
-
-func (m Mappings) String() (s string) {
-	for _, mapping := range m {
-		s += mapping.String() + "\n"
-	}
 	return
 }
 
@@ -127,6 +115,66 @@ temperatureToHumidity: %v,
 humidityToLocation: %v,
 }`, a.seeds, a.seedToSoil, a.soilToFertilizer, a.fertilizerToWater, a.waterToLight, a.lightToTemperature, a.temperatureToHumidity, a.humidityToLocation)
 
+}
+
+func parseCategories(lines []string) (al Almanac) {
+	for _, line := range lines {
+		category, relNumbers, _ := strings.Cut(line, ":")
+		numbers := getNumbers(relNumbers)
+
+		switch category {
+		case seeds:
+			al.seeds = numbers
+		case s2s:
+			al.seedToSoil = appendRelation(al.seedToSoil, numbers)
+		case s2f:
+			al.soilToFertilizer = appendRelation(al.soilToFertilizer, numbers)
+		case f2w:
+			al.fertilizerToWater = appendRelation(al.fertilizerToWater, numbers)
+		case w2l:
+			al.waterToLight = appendRelation(al.waterToLight, numbers)
+		case l2t:
+			al.lightToTemperature = appendRelation(al.lightToTemperature, numbers)
+		case t2h:
+			al.temperatureToHumidity = appendRelation(al.temperatureToHumidity, numbers)
+		case h2l:
+			al.humidityToLocation = appendRelation(al.humidityToLocation, numbers)
+		}
+	}
+	return
+}
+
+func (m Mapping) String() string {
+	return fmt.Sprintf("{seed: %d, soil: %d, fertilizer: %d, water: %d, light: %d, temperature: %d, humidity: %d, location: %d}", m.seed, m.soil, m.fertilizer, m.water, m.light, m.temperature, m.humidity, m.location)
+}
+
+func (m Mappings) String() (s string) {
+	for _, mapping := range m {
+		s += mapping.String() + "\n"
+	}
+	return
+}
+
+func (r Relations) MatchAll(i int) (matched int) {
+	for _, relation := range r {
+		matched = relation.Match(i)
+		// break as soon as we get a match
+		if matched != 0 && matched != i {
+			break
+		}
+	}
+	return
+
+}
+
+func (rel Relation) Match(input int) (matched int) {
+	matched = input
+	if input >= rel.from && input <= rel.from+rel.length {
+		diff := input - rel.from
+		diff = int(math.Abs(float64(diff)))
+		matched = rel.to + diff
+	}
+	return
 }
 
 func replaceAll(s string, replacements map[string]string) string {
@@ -160,55 +208,4 @@ func getNumbers(s string) (numbers []int) {
 		numbers = append(numbers, int(parsedInt))
 	}
 	return
-}
-
-func parseCategories(lines []string) (al Almanac) {
-	for _, line := range lines {
-		category, relNumbers, _ := strings.Cut(line, ":")
-		rel := getNumbers(relNumbers)
-
-		switch category {
-		case seeds:
-			al.seeds = rel
-		case s2s:
-			al.seedToSoil = appendRelation(al.seedToSoil, rel)
-		case s2f:
-			al.soilToFertilizer = appendRelation(al.soilToFertilizer, rel)
-		case f2w:
-			al.fertilizerToWater = appendRelation(al.fertilizerToWater, rel)
-		case w2l:
-			al.waterToLight = appendRelation(al.waterToLight, rel)
-		case l2t:
-			al.lightToTemperature = appendRelation(al.lightToTemperature, rel)
-		case t2h:
-			al.temperatureToHumidity = appendRelation(al.temperatureToHumidity, rel)
-		case h2l:
-			al.humidityToLocation = appendRelation(al.humidityToLocation, rel)
-		}
-	}
-	return
-}
-
-func (r Relations) MatchAll(i int) (matched int) {
-	for _, relation := range r {
-		matched = relation.Match(i)
-
-		// break as soon as we get a match
-		if matched != 0 && matched != i {
-			break
-		}
-	}
-	return
-
-}
-
-func (rel Relation) Match(input int) (matched int) {
-	if input >= rel.from && input <= rel.from+rel.length {
-		diff := input - rel.from
-		diff = int(math.Abs(float64(diff)))
-		m := rel.to + diff
-
-		return m
-	}
-	return input
 }
