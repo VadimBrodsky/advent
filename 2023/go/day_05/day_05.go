@@ -103,20 +103,6 @@ func (al Almanac) GetLowestLocation() (location int) {
 	return
 }
 
-func (a Almanac) String() (s string) {
-	return fmt.Sprintf(`{
-seeds: %v,
-seedToSoil: %v,
-soilToFertilizer: %v,
-fertilizerToWater: %v,
-waterToLight %v,
-lightToTemperature: %v,
-temperatureToHumidity: %v,
-humidityToLocation: %v,
-}`, a.seeds, a.seedToSoil, a.soilToFertilizer, a.fertilizerToWater, a.waterToLight, a.lightToTemperature, a.temperatureToHumidity, a.humidityToLocation)
-
-}
-
 func parseCategories(lines []string) (al Almanac) {
 	for _, line := range lines {
 		category, relNumbers, _ := strings.Cut(line, ":")
