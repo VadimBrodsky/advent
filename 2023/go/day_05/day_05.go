@@ -52,8 +52,8 @@ const (
 type Mappings []Mapping
 
 func NewAlmanac(input string) (al Almanac) {
-	replacedInput := replaceAll(input, map[string]string{
-		"\n":   " ",
+	input = strings.ReplaceAll(input, "\n", " ")
+	input = replaceAll(input, map[string]string{
 		" map": "",
 		" s":   "\ns",
 		" f":   "\nf",
@@ -62,7 +62,7 @@ func NewAlmanac(input string) (al Almanac) {
 		" h":   "\nh",
 		" l":   "\nl",
 	})
-	lines := strings.Split(replacedInput, "\n")
+	lines := strings.Split(input, "\n")
 	al = parseCategories(lines)
 	return
 }
@@ -153,7 +153,7 @@ func getNumbers(s string) (numbers []int) {
 	numberSlice := re.FindAllString(s, -1)
 
 	for _, s := range numberSlice {
-		parsedInt, err := strconv.ParseInt(s, 10, 32)
+		parsedInt, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
 			fmt.Printf("cannot parse number %q\n", s)
 		}

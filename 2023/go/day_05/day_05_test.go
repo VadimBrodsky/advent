@@ -1,6 +1,9 @@
 package day05
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestDay05(t *testing.T) {
 	sampleAlmanac := `seeds: 79 14 55 13
@@ -53,6 +56,21 @@ humidity-to-location map:
 		if wantMapping.String() != gotMapping.String() {
 			t.Errorf("expected \n%v, got \n%v", wantMapping, gotMapping)
 		}
+
+		if wantLowestLocation != gotLowestLocation {
+			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
+		}
+	})
+
+	t.Run("should return the correct locations for the full almanac input", func(t *testing.T) {
+		fullAlmanac, err := os.ReadFile("input.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		wantLowestLocation := 323142486
+		almanac := NewAlmanac(string(fullAlmanac))
+		gotLowestLocation := almanac.GetLowestLocation()
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
