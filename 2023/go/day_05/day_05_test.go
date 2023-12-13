@@ -94,7 +94,7 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct location for a range of seeds for the full almanac input", func(t *testing.T) {
-		t.Skip("")
+		// t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
