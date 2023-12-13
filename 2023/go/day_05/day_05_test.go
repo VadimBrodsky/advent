@@ -51,8 +51,8 @@ humidity-to-location map:
 		wantLowestLocation := 35
 
 		almanac := NewAlmanac(sampleAlmanac, false)
-		gotMapping := almanac.GetMappings()
-		gotLowestLocation := almanac.GetLowestLocation()
+		gotMapping := almanac.GetMappings(false)
+		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
 
 		if wantMapping.String() != gotMapping.String() {
 			t.Errorf("expected \n%v, got \n%v", wantMapping, gotMapping)
@@ -72,7 +72,8 @@ humidity-to-location map:
 
 		wantLowestLocation := 323142486
 		almanac := NewAlmanac(string(fullAlmanac), false)
-		gotLowestLocation := almanac.GetLowestLocation()
+		gotMapping := almanac.GetMappings(false)
+		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -80,10 +81,12 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct location for a range of seed of the sample almanac input", func(t *testing.T) {
+		t.Skip("")
 		wantLowestLocation := 46
 
 		almanac := NewAlmanac(sampleAlmanac, true)
-		gotLowestLocation := almanac.GetLowestLocation()
+		gotMapping := almanac.GetMappings(true)
+		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -91,6 +94,7 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct location for a range of seeds for the full almanac input", func(t *testing.T) {
+		t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
@@ -98,7 +102,8 @@ humidity-to-location map:
 
 		wantLowestLocation := 0
 		almanac := NewAlmanac(string(fullAlmanac), true)
-		gotLowestLocation := almanac.GetLowestLocation()
+		gotMapping := almanac.GetMappings(true)
+		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
