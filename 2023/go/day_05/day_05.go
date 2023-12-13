@@ -9,26 +9,26 @@ import (
 )
 
 type Mapping struct {
-	seed        int
-	soil        int
-	fertilizer  int
-	water       int
-	light       int
-	temperature int
-	humidity    int
-	location    int
+	seed        int64
+	soil        int64
+	fertilizer  int64
+	water       int64
+	light       int64
+	temperature int64
+	humidity    int64
+	location    int64
 }
 
 type Relation struct {
-	from   int
-	to     int
-	length int
+	from   int64
+	to     int64
+	length int64
 }
 
 type Relations []Relation
 
 type Almanac struct {
-	seeds                 []int
+	seeds                 []int64
 	seedToSoil            Relations
 	soilToFertilizer      Relations
 	fertilizerToWater     Relations
@@ -83,7 +83,7 @@ func (al Almanac) GetMappings(seedRanges bool) (mappings Mappings) {
 	return
 }
 
-func (al Almanac) GetSeedMapping(seed int) Mapping {
+func (al Almanac) GetSeedMapping(seed int64) Mapping {
 	soil := al.seedToSoil.MatchAll(seed)
 	fertilizer := al.soilToFertilizer.MatchAll(soil)
 	water := al.fertilizerToWater.MatchAll(fertilizer)
@@ -104,8 +104,8 @@ func (al Almanac) GetSeedMapping(seed int) Mapping {
 	}
 }
 
-func (al Almanac) GetLowestLocation(mappings Mappings) (location int) {
-	location = math.MaxInt
+func (al Almanac) GetLowestLocation(mappings Mappings) (location int64) {
+	location = math.MaxInt64
 
 	for _, m := range mappings {
 		if m.location < location {
@@ -177,7 +177,7 @@ func (m Mappings) String() (s string) {
 	return
 }
 
-func (r Relations) MatchAll(i int) (matched int) {
+func (r Relations) MatchAll(i int64) (matched int64) {
 	for _, relation := range r {
 		matched = relation.Match(i)
 		// break as soon as we get a match
@@ -189,11 +189,11 @@ func (r Relations) MatchAll(i int) (matched int) {
 
 }
 
-func (rel Relation) Match(input int) (matched int) {
+func (rel Relation) Match(input int64) (matched int64) {
 	matched = input
 	if input >= rel.from && input <= rel.from+rel.length {
 		diff := input - rel.from
-		diff = int(math.Abs(float64(diff)))
+		diff = int64(math.Abs(float64(diff)))
 		matched = rel.to + diff
 	}
 	return
@@ -206,7 +206,7 @@ func replaceAll(s string, replacements map[string]string) string {
 	return s
 }
 
-func appendRelation(r Relations, values []int) Relations {
+func appendRelation(r Relations, values []int64) Relations {
 	for i := 0; i < len(values); i += 3 {
 		r = append(r, Relation{
 			to:     values[i],
@@ -218,7 +218,7 @@ func appendRelation(r Relations, values []int) Relations {
 	return r
 }
 
-func getNumbers(s string) (numbers []int) {
+func getNumbers(s string) (numbers []int64) {
 	re := regexp.MustCompile(`\d+`)
 	numberSlice := re.FindAllString(s, -1)
 
@@ -227,7 +227,7 @@ func getNumbers(s string) (numbers []int) {
 		if err != nil {
 			fmt.Printf("cannot parse number %q\n", s)
 		}
-		numbers = append(numbers, int(parsedInt))
+		numbers = append(numbers, parsedInt)
 	}
 	return
 }

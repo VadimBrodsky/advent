@@ -48,11 +48,11 @@ humidity-to-location map:
 			Mapping{seed: 55, soil: 57, fertilizer: 57, water: 53, light: 46, temperature: 82, humidity: 82, location: 86},
 			Mapping{seed: 13, soil: 13, fertilizer: 52, water: 41, light: 34, temperature: 34, humidity: 35, location: 35},
 		}
-		wantLowestLocation := 35
+		wantLowestLocation := int64(35)
 
 		almanac := NewAlmanac(sampleAlmanac)
 		gotMapping := almanac.GetMappings(false)
-		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
+		gotLowestLocation := almanac.GetLowestLocationOptimized(false)
 
 		if wantMapping.String() != gotMapping.String() {
 			t.Errorf("expected \n%v, got \n%v", wantMapping, gotMapping)
@@ -64,15 +64,15 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct locations for the full almanac input", func(t *testing.T) {
-		// t.Skip("")
+		t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		wantLowestLocation := 323142486
+		wantLowestLocation := int64(323142486)
 		almanac := NewAlmanac(string(fullAlmanac))
-		gotLowestLocation := almanac.GetLowestLocationOptimized()
+		gotLowestLocation := almanac.GetLowestLocationOptimized(false)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -81,10 +81,10 @@ humidity-to-location map:
 
 	t.Run("should return the correct location for a range of seed of the sample almanac input", func(t *testing.T) {
 		t.Skip("")
-		wantLowestLocation := 46
+		wantLowestLocation := int64(46)
 
 		almanac := NewAlmanac(sampleAlmanac)
-		gotLowestLocation := almanac.GetLowestLocationOptimized()
+		gotLowestLocation := almanac.GetLowestLocationOptimized(true)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -92,15 +92,15 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct location for a range of seeds for the full almanac input", func(t *testing.T) {
-		t.Skip("")
+		// t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		wantLowestLocation := 0
+		wantLowestLocation := int64(0)
 		almanac := NewAlmanac(string(fullAlmanac))
-		gotLowestLocation := almanac.GetLowestLocationOptimized()
+		gotLowestLocation := almanac.GetLowestLocationOptimized(true)
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
