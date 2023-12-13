@@ -115,14 +115,25 @@ func (al Almanac) GetLowestLocation(mappings Mappings) (location int) {
 	return
 }
 
-func (al Almanac) GetLowestLocationOptimized() (location int) {
-	location = math.MaxInt
-	for i := 0; i < len(al.seeds); i += 2 {
-		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-			mapping := al.GetSeedMapping(j)
-			if mapping.location < location {
-				location = mapping.location
+func (al Almanac) GetLowestLocationOptimized(seedRanges bool) (location int64) {
+	location = math.MaxInt64
+
+	if seedRanges {
+		for i := 0; i < len(al.seeds); i += 2 {
+			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
+				mapping := al.GetSeedMapping(j)
+				if mapping.location < location {
+					location = mapping.location
+				}
 			}
+		}
+		return
+	}
+
+	for _, i := range al.seeds {
+		mapping := al.GetSeedMapping(i)
+		if mapping.location < location {
+			location = mapping.location
 		}
 	}
 	return
