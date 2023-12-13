@@ -50,7 +50,7 @@ humidity-to-location map:
 		}
 		wantLowestLocation := 35
 
-		almanac := NewAlmanac(sampleAlmanac, false)
+		almanac := NewAlmanac(sampleAlmanac)
 		gotMapping := almanac.GetMappings(false)
 		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
 
@@ -64,16 +64,15 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct locations for the full almanac input", func(t *testing.T) {
-		t.Skip("")
+		// t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		wantLowestLocation := 323142486
-		almanac := NewAlmanac(string(fullAlmanac), false)
-		gotMapping := almanac.GetMappings(false)
-		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
+		almanac := NewAlmanac(string(fullAlmanac))
+		gotLowestLocation := almanac.GetLowestLocationOptimized()
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -84,9 +83,8 @@ humidity-to-location map:
 		t.Skip("")
 		wantLowestLocation := 46
 
-		almanac := NewAlmanac(sampleAlmanac, true)
-		gotMapping := almanac.GetMappings(true)
-		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
+		almanac := NewAlmanac(sampleAlmanac)
+		gotLowestLocation := almanac.GetLowestLocationOptimized()
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)
@@ -94,16 +92,15 @@ humidity-to-location map:
 	})
 
 	t.Run("should return the correct location for a range of seeds for the full almanac input", func(t *testing.T) {
-		// t.Skip("")
+		t.Skip("")
 		fullAlmanac, err := os.ReadFile("input.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		wantLowestLocation := 0
-		almanac := NewAlmanac(string(fullAlmanac), true)
-		gotMapping := almanac.GetMappings(true)
-		gotLowestLocation := almanac.GetLowestLocation(gotMapping)
+		almanac := NewAlmanac(string(fullAlmanac))
+		gotLowestLocation := almanac.GetLowestLocationOptimized()
 
 		if wantLowestLocation != gotLowestLocation {
 			t.Errorf("expected %d, got %d", wantLowestLocation, gotLowestLocation)

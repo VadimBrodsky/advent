@@ -51,7 +51,7 @@ const (
 	h2l   = "humidity-to-location"
 )
 
-func NewAlmanac(input string, seedRanges bool) (al Almanac) {
+func NewAlmanac(input string) (al Almanac) {
 	input = strings.ReplaceAll(input, "\n", " ")
 	input = replaceAll(input, map[string]string{
 		" map": "",
@@ -110,6 +110,19 @@ func (al Almanac) GetLowestLocation(mappings Mappings) (location int) {
 	for _, m := range mappings {
 		if m.location < location {
 			location = m.location
+		}
+	}
+	return
+}
+
+func (al Almanac) GetLowestLocationOptimized() (location int) {
+	location = math.MaxInt
+	for i := 0; i < len(al.seeds); i += 2 {
+		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
+			mapping := al.GetSeedMapping(j)
+			if mapping.location < location {
+				location = mapping.location
+			}
 		}
 	}
 	return
