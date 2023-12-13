@@ -50,6 +50,30 @@ const (
 
 type Mappings []Mapping
 
+func NewAlmanac(input string) (al Almanac) {
+	input = replaceAll(input, map[string]string{
+		"\n":   " ",
+		" map": "",
+		" s":   "\ns",
+		" f":   "\nf",
+		" w":   "\nw",
+		" t":   "\nt",
+		" h":   "\nh",
+		" l":   "\nl",
+	})
+	lines := strings.Split(input, "\n")
+	al = parseCategories(lines)
+	return
+}
+
+func (al Almanac) GetMappings() (mappings Mappings) {
+	return
+}
+
+func (al Almanac) GetLowestLocation() (location int) {
+	return location
+}
+
 func (m Mapping) String() string {
 	return fmt.Sprintf("{seed: %d, soil: %d, fertilizer: %d, water: %d, light: %d, temperature: %d, humidity: %d, location: %d}", m.seed, m.soil, m.fertilizer, m.water, m.light, m.temperature, m.humidity, m.location)
 }
@@ -73,32 +97,6 @@ temperatureToHumidity: %v,
 humidityToLocation: %v,
 }`, a.seeds, a.seedToSoil, a.soilToFertilizer, a.fertilizerToWater, a.waterToLight, a.lightToTemperature, a.temperatureToHumidity, a.humidityToLocation)
 
-}
-
-func NewAlmanac(input string) (m Mapping) {
-	input = replaceAll(input, map[string]string{
-		"\n":   " ",
-		" map": "",
-		" s":   "\ns",
-		" f":   "\nf",
-		" w":   "\nw",
-		" t":   "\nt",
-		" h":   "\nh",
-		" l":   "\nl",
-	})
-	lines := strings.Split(input, "\n")
-	al := parseCategories(lines)
-
-	fmt.Printf("\n%v", al)
-	return
-}
-
-func (m Mapping) GetMappings() (mappings Mappings) {
-	return
-}
-
-func (m Mapping) GetLowestLocation() (location int) {
-	return location
 }
 
 func replaceAll(s string, replacements map[string]string) string {
