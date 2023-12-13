@@ -51,7 +51,7 @@ const (
 	h2l   = "humidity-to-location"
 )
 
-func NewAlmanac(input string) (al Almanac) {
+func NewAlmanac(input string, seedRanges bool) (al Almanac) {
 	input = strings.ReplaceAll(input, "\n", " ")
 	input = replaceAll(input, map[string]string{
 		" map": "",
@@ -63,7 +63,7 @@ func NewAlmanac(input string) (al Almanac) {
 		" l":   "\nl",
 	})
 	lines := strings.Split(input, "\n")
-	al = parseCategories(lines)
+	al = parseCategories(lines, seedRanges)
 	return
 }
 
@@ -103,13 +103,17 @@ func (al Almanac) GetLowestLocation() (location int) {
 	return
 }
 
-func parseCategories(lines []string) (al Almanac) {
+func parseCategories(lines []string, seedRanges bool) (al Almanac) {
 	for _, line := range lines {
 		category, relNumbers, _ := strings.Cut(line, ":")
 		numbers := getNumbers(relNumbers)
 
 		switch category {
 		case seeds:
+			if seedRanges {
+				numbers = GetSeedRanges(numbers)
+				fmt.Printf("numbers: %v", numbers)
+			}
 			al.seeds = numbers
 		case s2s:
 			al.seedToSoil = appendRelation(al.seedToSoil, numbers)
@@ -192,6 +196,15 @@ func getNumbers(s string) (numbers []int) {
 			fmt.Printf("cannot parse number %q\n", s)
 		}
 		numbers = append(numbers, int(parsedInt))
+	}
+	return
+}
+
+func GetSeedRanges(numbers []int) (seeds []int) {
+	for i := 0; i < len(numbers); i += 2 {
+		for j := numbers[i]; j < numbers[i]+numbers[i+1]; j++ {
+			seeds = append(seeds, j)
+		}
 	}
 	return
 }
