@@ -3,6 +3,7 @@ package day05
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -18,15 +19,15 @@ type Mapping struct {
 }
 
 type Relation struct {
-	from   string
-	to     string
-	length string
+	from   int
+	to     int
+	length int
 }
 
 type Relations []Relation
 
 type Almanac struct {
-	seeds                 []string
+	seeds                 []int
 	seedToSoil            Relations
 	soilToFertilizer      Relations
 	fertilizerToWater     Relations
@@ -36,16 +37,16 @@ type Almanac struct {
 	humidityToLocation    Relations
 }
 
-var Categoies = []string{
-	"seeds",
-	"seed-to-soil",
-	"soil-to-fertilizer",
-	"fertilizer-to-water",
-	"water-to-light",
-	"light-to-temperature",
-	"temperature-to-humidity",
-	"humidity-to-location",
-}
+const (
+	seeds = "seeds"
+	s2s   = "seed-to-soil"
+	s2f   = "soil-to-fertilizer"
+	f2w   = "fertilizer-to-water"
+	w2l   = "water-to-light"
+	l2t   = "light-to-temperature"
+	t2h   = "temperature-to-humidity"
+	h2l   = "humidity-to-location"
+)
 
 type Mappings []Mapping
 
@@ -62,7 +63,7 @@ func (m Mappings) String() (s string) {
 
 func (a Almanac) String() (s string) {
 	return fmt.Sprintf(`{
-seeds: %q,
+seeds: %v,
 seedToSoil: %v,
 soilToFertilizer: %v,
 fertilizerToWater: %v,
@@ -75,7 +76,7 @@ humidityToLocation: %v,
 }
 
 func NewAlmanac(input string) (m Mapping) {
-	replacements := map[string]string{
+	input = replaceAll(input, map[string]string{
 		"\n":   " ",
 		" map": "",
 		" s":   "\ns",
@@ -84,52 +85,12 @@ func NewAlmanac(input string) (m Mapping) {
 		" t":   "\nt",
 		" h":   "\nh",
 		" l":   "\nl",
-	}
-	for old, new := range replacements {
-		input = strings.ReplaceAll(input, old, new)
-	}
-
+	})
 	lines := strings.Split(input, "\n")
-	var al Almanac
-	re := regexp.MustCompile(`\d+`)
-	for _, line := range lines {
-		l := strings.Split(line, ":")
-
-		switch {
-		case strings.Contains(l[0], "seeds"):
-			al.seeds = re.FindAllString(l[1], -1)
-		case strings.Contains(l[0], "seed-to-soil"):
-			al.seedToSoil.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "soil-to-fertilizer"):
-			al.soilToFertilizer.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "fertilizer-to-water"):
-			al.fertilizerToWater.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "water-to-light"):
-			al.waterToLight.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "light-to-temperature"):
-			al.lightToTemperature.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "temperature-to-humidity"):
-			al.temperatureToHumidity.append(re.FindAllString(l[1], -1))
-		case strings.Contains(l[0], "humidity-to-location"):
-			al.humidityToLocation.append(re.FindAllString(l[1], -1))
-		}
-
-		fmt.Printf("%q", line)
-	}
+	al := parseCategories(lines)
 
 	fmt.Printf("\n%v", al)
 	return
-}
-
-func (r *Relations) append(values []string) {
-	for i := 0; i < len(values); i += 3 {
-		*r = append(*r, Relation{
-			to:     values[i],
-			from:   values[i+1],
-			length: values[i+2],
-		})
-
-	}
 }
 
 func (m Mapping) GetMappings() (mappings Mappings) {
@@ -138,4 +99,64 @@ func (m Mapping) GetMappings() (mappings Mappings) {
 
 func (m Mapping) GetLowestLocation() (location int) {
 	return location
+}
+
+func replaceAll(s string, replacements map[string]string) string {
+	for old, new := range replacements {
+		s = strings.ReplaceAll(s, old, new)
+	}
+	return s
+}
+
+func appendRelation(r Relations, values []int) Relations {
+	for i := 0; i < len(values); i += 3 {
+		r = append(r, Relation{
+			to:     values[i],
+			from:   values[i+1],
+			length: values[i+2],
+		})
+
+	}
+	return r
+}
+
+func getNumbers(s string) (numbers []int) {
+	re := regexp.MustCompile(`\d+`)
+	numberSlice := re.FindAllString(s, -1)
+
+	for _, s := range numberSlice {
+		parsedInt, err := strconv.ParseInt(s, 10, 32)
+		if err != nil {
+			fmt.Printf("cannot parse number %q\n", s)
+		}
+		numbers = append(numbers, int(parsedInt))
+	}
+	return
+}
+
+func parseCategories(lines []string) (al Almanac) {
+	for _, line := range lines {
+		category, relNumbers, _ := strings.Cut(line, ":")
+		rel := getNumbers(relNumbers)
+
+		switch category {
+		case seeds:
+			al.seeds = rel
+		case s2s:
+			al.seedToSoil = appendRelation(al.seedToSoil, rel)
+		case s2f:
+			al.soilToFertilizer = appendRelation(al.soilToFertilizer, rel)
+		case f2w:
+			al.fertilizerToWater = appendRelation(al.fertilizerToWater, rel)
+		case w2l:
+			al.waterToLight = appendRelation(al.waterToLight, rel)
+		case l2t:
+			al.lightToTemperature = appendRelation(al.lightToTemperature, rel)
+		case t2h:
+			al.temperatureToHumidity = appendRelation(al.temperatureToHumidity, rel)
+		case h2l:
+			al.humidityToLocation = appendRelation(al.humidityToLocation, rel)
+		}
+	}
+	return
 }
