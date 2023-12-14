@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Mapping struct {
@@ -109,14 +110,38 @@ func (al Almanac) GetLowestLocation() (location int) {
 
 func (al Almanac) GetLowestLocationForRange() (location int) {
 	location = math.MaxInt
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	resultChan := make(chan int, len(al.seeds))
+
 	for i := 0; i < len(al.seeds); i += 2 {
-		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-			mapping := al.GetSeedMapping(j)
-			if mapping.location < location {
-				location = mapping.location
+		wg.Add(1)
+
+		go func(i int, wg *sync.WaitGroup, resultChan chan int) {
+			defer wg.Done()
+
+			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
+				mapping := al.GetSeedMapping(j)
+				resultChan <- mapping.location
 			}
-		}
+		}(i, &wg, resultChan)
 	}
+
+	// Close the result channel when all goroutines are done
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	for result := range resultChan {
+		mu.Lock()
+		if result < location {
+			location = result
+		}
+		mu.Unlock()
+	}
+
 	return
 }
 
