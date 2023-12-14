@@ -110,7 +110,7 @@ func (al Almanac) GetLowestLocation() (location int) {
 func (al Almanac) GetLowestLocationForRange() (location int) {
 	location = math.MaxInt
 	for i := 0; i < len(al.seeds); i += 2 {
-		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]-1; j++ {
+		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
 			mapping := al.GetSeedMapping(j)
 			if mapping.location < location {
 				location = mapping.location
@@ -172,7 +172,7 @@ func (r Relations) MatchAll(i int) (matched int) {
 
 func (rel Relation) Match(input int) (matched int) {
 	matched = input
-	if input >= rel.from && input <= rel.from+rel.length {
+	if input >= rel.from && input < rel.from+rel.length {
 		diff := input - rel.from
 		diff = int(math.Abs(float64(diff)))
 		matched = rel.to + diff
