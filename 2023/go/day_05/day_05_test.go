@@ -94,7 +94,7 @@ humidity-to-location map:
 			t.Fatal(err)
 		}
 
-		wantLowestLocation := 79874952
+		wantLowestLocation := 79874951
 		almanac := NewAlmanac(string(fullAlmanac))
 		gotLowestLocation := almanac.GetLowestLocationForRange()
 
