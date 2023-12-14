@@ -67,18 +67,33 @@ func NewAlmanac(input string) (al Almanac) {
 	return
 }
 
-func (al Almanac) GetMappings(seedRanges bool) (mappings Mappings) {
+func (al Almanac) GetMappings() (mappings Mappings) {
+	for _, seed := range al.seeds {
+		mappings = append(mappings, al.GetSeedMapping(seed))
+	}
+	return
+}
+
+func (al Almanac) GetLowestLocationOptimized(seedRanges bool) (location int) {
+	location = math.MaxInt
+
 	if seedRanges {
 		for i := 0; i < len(al.seeds); i += 2 {
-			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-				mappings = append(mappings, al.GetSeedMapping(j))
+			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]-1; j++ {
+				mapping := al.GetSeedMapping(j)
+				if mapping.location < location {
+					location = mapping.location
+				}
 			}
 		}
 		return
 	}
 
-	for _, seed := range al.seeds {
-		mappings = append(mappings, al.GetSeedMapping(seed))
+	for _, i := range al.seeds {
+		mapping := al.GetSeedMapping(i)
+		if mapping.location < location {
+			location = mapping.location
+		}
 	}
 	return
 }
@@ -110,30 +125,6 @@ func (al Almanac) GetLowestLocation(mappings Mappings) (location int64) {
 	for _, m := range mappings {
 		if m.location < location {
 			location = m.location
-		}
-	}
-	return
-}
-
-func (al Almanac) GetLowestLocationOptimized(seedRanges bool) (location int64) {
-	location = math.MaxInt64
-
-	if seedRanges {
-		for i := 0; i < len(al.seeds); i += 2 {
-			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-				mapping := al.GetSeedMapping(j)
-				if mapping.location < location {
-					location = mapping.location
-				}
-			}
-		}
-		return
-	}
-
-	for _, i := range al.seeds {
-		mapping := al.GetSeedMapping(i)
-		if mapping.location < location {
-			location = mapping.location
 		}
 	}
 	return

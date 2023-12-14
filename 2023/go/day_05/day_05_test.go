@@ -51,7 +51,7 @@ humidity-to-location map:
 		wantLowestLocation := int64(35)
 
 		almanac := NewAlmanac(sampleAlmanac)
-		gotMapping := almanac.GetMappings(false)
+		gotMapping := almanac.GetMappings()
 		gotLowestLocation := almanac.GetLowestLocationOptimized(false)
 
 		if wantMapping.String() != gotMapping.String() {
@@ -98,7 +98,7 @@ humidity-to-location map:
 			t.Fatal(err)
 		}
 
-		wantLowestLocation := int64(0)
+		wantLowestLocation := int64(79874952)
 		almanac := NewAlmanac(string(fullAlmanac))
 		gotLowestLocation := almanac.GetLowestLocationOptimized(true)
 
