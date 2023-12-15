@@ -45,7 +45,7 @@ func (r Races) WinsProduct() (p int) {
 }
 
 func (r Race) String() string {
-  return fmt.Sprintf("{time: %d, distance: %d}", r.time, r.distance)
+	return fmt.Sprintf("{time: %d, distance: %d}", r.time, r.distance)
 }
 
 func parseLines(lines []string) (times, distances []int, err error) {
@@ -77,12 +77,14 @@ func parseLine(s string) (dataType string, results []int, err error) {
 	if !found {
 		err = fmt.Errorf("bad input data")
 	}
+
 	re := regexp.MustCompile(`\d+`)
 	valuesSlice := re.FindAllString(values, -1)
+
 	for _, v := range valuesSlice {
-		number, err := strconv.Atoi(v)
-		if err != nil {
-			fmt.Printf("Could not parse number: %s\nm", v)
+		number, e := strconv.Atoi(v)
+		if e != nil {
+			err = e
 		}
 		results = append(results, number)
 	}
