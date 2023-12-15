@@ -69,7 +69,6 @@ func parseLines(lines []string) (times, distances []int, err error) {
 		err = fmt.Errorf("Mismatch in times and disances")
 	}
 	return
-
 }
 
 func parseLine(s string) (dataType string, results []int, err error) {
