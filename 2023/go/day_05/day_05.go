@@ -9,26 +9,26 @@ import (
 )
 
 type Mapping struct {
-	seed        int64
-	soil        int64
-	fertilizer  int64
-	water       int64
-	light       int64
-	temperature int64
-	humidity    int64
-	location    int64
+	seed        int
+	soil        int
+	fertilizer  int
+	water       int
+	light       int
+	temperature int
+	humidity    int
+	location    int
 }
 
 type Relation struct {
-	from   int64
-	to     int64
-	length int64
+	from   int
+	to     int
+	length int
 }
 
 type Relations []Relation
 
 type Almanac struct {
-	seeds                 []int64
+	seeds                 []int
 	seedToSoil            Relations
 	soilToFertilizer      Relations
 	fertilizerToWater     Relations
@@ -67,23 +67,14 @@ func NewAlmanac(input string) (al Almanac) {
 	return
 }
 
-func (al Almanac) GetMappings(seedRanges bool) (mappings Mappings) {
-	if seedRanges {
-		for i := 0; i < len(al.seeds); i += 2 {
-			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-				mappings = append(mappings, al.GetSeedMapping(j))
-			}
-		}
-		return
-	}
-
+func (al Almanac) GetMappings() (mappings Mappings) {
 	for _, seed := range al.seeds {
 		mappings = append(mappings, al.GetSeedMapping(seed))
 	}
 	return
 }
 
-func (al Almanac) GetSeedMapping(seed int64) Mapping {
+func (al Almanac) GetSeedMapping(seed int) Mapping {
 	soil := al.seedToSoil.MatchAll(seed)
 	fertilizer := al.soilToFertilizer.MatchAll(soil)
 	water := al.fertilizerToWater.MatchAll(fertilizer)
@@ -104,36 +95,26 @@ func (al Almanac) GetSeedMapping(seed int64) Mapping {
 	}
 }
 
-func (al Almanac) GetLowestLocation(mappings Mappings) (location int64) {
-	location = math.MaxInt64
-
-	for _, m := range mappings {
-		if m.location < location {
-			location = m.location
-		}
-	}
-	return
-}
-
-func (al Almanac) GetLowestLocationOptimized(seedRanges bool) (location int64) {
-	location = math.MaxInt64
-
-	if seedRanges {
-		for i := 0; i < len(al.seeds); i += 2 {
-			for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
-				mapping := al.GetSeedMapping(j)
-				if mapping.location < location {
-					location = mapping.location
-				}
-			}
-		}
-		return
-	}
+func (al Almanac) GetLowestLocation() (location int) {
+	location = math.MaxInt
 
 	for _, i := range al.seeds {
 		mapping := al.GetSeedMapping(i)
 		if mapping.location < location {
 			location = mapping.location
+		}
+	}
+	return
+}
+
+func (al Almanac) GetLowestLocationForRange() (location int) {
+	location = math.MaxInt
+	for i := 0; i < len(al.seeds); i += 2 {
+		for j := al.seeds[i]; j < al.seeds[i]+al.seeds[i+1]; j++ {
+			mapping := al.GetSeedMapping(j)
+			if mapping.location < location {
+				location = mapping.location
+			}
 		}
 	}
 	return
@@ -177,23 +158,23 @@ func (m Mappings) String() (s string) {
 	return
 }
 
-func (r Relations) MatchAll(i int64) (matched int64) {
+func (r Relations) MatchAll(i int) (matched int) {
 	for _, relation := range r {
 		matched = relation.Match(i)
+
 		// break as soon as we get a match
 		if matched != 0 && matched != i {
 			break
 		}
 	}
 	return
-
 }
 
-func (rel Relation) Match(input int64) (matched int64) {
+func (rel Relation) Match(input int) (matched int) {
 	matched = input
-	if input >= rel.from && input <= rel.from+rel.length {
+	if input >= rel.from && input < rel.from+rel.length {
 		diff := input - rel.from
-		diff = int64(math.Abs(float64(diff)))
+		diff = int(math.Abs(float64(diff)))
 		matched = rel.to + diff
 	}
 	return
@@ -206,7 +187,7 @@ func replaceAll(s string, replacements map[string]string) string {
 	return s
 }
 
-func appendRelation(r Relations, values []int64) Relations {
+func appendRelation(r Relations, values []int) Relations {
 	for i := 0; i < len(values); i += 3 {
 		r = append(r, Relation{
 			to:     values[i],
@@ -218,16 +199,16 @@ func appendRelation(r Relations, values []int64) Relations {
 	return r
 }
 
-func getNumbers(s string) (numbers []int64) {
+func getNumbers(s string) (numbers []int) {
 	re := regexp.MustCompile(`\d+`)
 	numberSlice := re.FindAllString(s, -1)
 
 	for _, s := range numberSlice {
-		parsedInt, err := strconv.ParseInt(s, 10, 64)
+		parsedInt, err := strconv.ParseInt(s, 10, 0)
 		if err != nil {
 			fmt.Printf("cannot parse number %q\n", s)
 		}
-		numbers = append(numbers, parsedInt)
+		numbers = append(numbers, int(parsedInt))
 	}
 	return
 }
