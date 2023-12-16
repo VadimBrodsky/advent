@@ -21,6 +21,7 @@ const (
 )
 
 func NewBoatRaces(input string) (r Races) {
+	input = strings.TrimRight(input, "\n")
 	lines := strings.Split(input, "\n")
 	times, distances, err := parseLines(lines)
 
@@ -33,7 +34,6 @@ func NewBoatRaces(input string) (r Races) {
 		r = append(r, race)
 	}
 
-	fmt.Printf("races: %v\n", r)
 	return
 }
 
