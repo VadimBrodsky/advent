@@ -13,7 +13,13 @@ KTJJT 220
 QQQJA 483`
 
 	t.Run("get the correct total winnings for the sample input", func(t *testing.T) {
-		wantSortedByRanks := Hands{"32T3K", "KTJJT", "KK677", "QQQJA", "T77J5"}
+		wantSortedByRanks := Hands{
+			Hand{cards: "32T3K", bid: 765},
+			Hand{cards: "KTJJT", bid: 220},
+			Hand{cards: "KK677", bid: 28},
+			Hand{cards: "QQQJA", bid: 482},
+			Hand{cards: "T55JS", bid: 684},
+		}
 		wantTotalWinnings := 6440
 
 		hands := NewCamelGame(sampleHandsAndBids)
@@ -21,11 +27,11 @@ QQQJA 483`
 		gotTotalWinnings := hands.Winnings()
 
 		if !slices.Equal(wantSortedByRanks, gotSortedByRanks) {
-			t.Errorf("got %v, want %v", wantSortedByRanks, gotSortedByRanks)
+			t.Errorf("want %v, got %v", wantSortedByRanks, gotSortedByRanks)
 		}
 
 		if wantTotalWinnings != gotTotalWinnings {
-			t.Errorf("got %d, want %d", wantTotalWinnings, gotTotalWinnings)
+			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
 		}
 	})
 }
