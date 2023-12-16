@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -32,11 +33,24 @@ func NewCamelGame(input string) (game Hands) {
 }
 
 func (h Hands) SortByRanks() (hands Hands) {
+  sort.Sort(h)
 	return
 }
 
 func (h Hands) Winnings() (winnings int) {
 	return
+}
+
+func (h Hands) Len() int {
+  return len(h)
+}
+
+func (h Hands) Swap(i, j int) {
+  h[i], h[j] = h[j], h[i]
+}
+
+func (h Hands) Less(i,j int) bool {
+  return true
 }
 
 func (h Hands) ParseHandsAndBids(reader *bufio.Scanner) (game Hands, err error) {
