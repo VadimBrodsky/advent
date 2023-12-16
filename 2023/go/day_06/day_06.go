@@ -15,8 +15,9 @@ type Race struct {
 }
 
 const (
-	TIME     = "Time"
-	DISTANCE = "Distance"
+	TIME         = "Time"
+	DISTANCE     = "Distance"
+	ACCELERATION = 1
 )
 
 func NewBoatRaces(input string) (r Races) {
@@ -37,10 +38,31 @@ func NewBoatRaces(input string) (r Races) {
 }
 
 func (r Races) Wins() (wins []int) {
+	wins = make([]int, len(r))
+
+	for i, race := range r {
+		for t := 0; t < race.time; t++ {
+			speed := t * ACCELERATION
+			timeLeft := race.time - t
+			distanceTraveled := speed * timeLeft
+
+			if distanceTraveled > race.distance {
+				wins[i] += 1
+			}
+		}
+	}
+
 	return
 }
 
 func (r Races) WinsProduct() (p int) {
+	p = 1
+
+	wins := r.Wins()
+	for _, win := range wins {
+		p *= win
+	}
+
 	return
 }
 
@@ -66,7 +88,7 @@ func parseLines(lines []string) (times, distances []int, err error) {
 		}
 	}
 	if len(times) != len(distances) {
-		err = fmt.Errorf("Mismatch in times and disances")
+		err = fmt.Errorf("Mismatch in times and distances")
 	}
 	return
 }
