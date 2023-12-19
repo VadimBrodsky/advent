@@ -32,9 +32,10 @@ func NewCamelGame(input string) (game Hands) {
 	return
 }
 
-func (h Hands) SortByRanks() (hands Hands) {
-  sort.Sort(h)
-	return
+func (h Hands) SortByRanks() Hands {
+	sort.Sort(h)
+	fmt.Printf("%v\n", h)
+	return h
 }
 
 func (h Hands) Winnings() (winnings int) {
@@ -42,15 +43,39 @@ func (h Hands) Winnings() (winnings int) {
 }
 
 func (h Hands) Len() int {
-  return len(h)
+	return len(h)
 }
 
 func (h Hands) Swap(i, j int) {
-  h[i], h[j] = h[j], h[i]
+	h[i], h[j] = h[j], h[i]
 }
 
-func (h Hands) Less(i,j int) bool {
-  return true
+func (h Hands) Less(i, j int) bool {
+	iScore := h[i].checkRules()
+	jScore := h[j].checkRules()
+
+	if iScore == jScore {
+		fmt.Printf("tie iScore: %d, jScore: %d\n", iScore, jScore)
+
+		for k := range h[i].cards {
+			iCard, jCard := h[i].cards[k], h[j].cards[k]
+			if iCard == jCard {
+				continue
+			}
+
+			iScore = cardToScore(iCard)
+			jScore = cardToScore(jCard)
+
+			// fmt.Printf("iCard: %s, jCard: %s, iScore: %d, jScore: %d\n", string(iCard), string(jCard), iScore, jScore)
+			break
+		}
+	}
+
+	fmt.Printf("i %d: %v, score: %d\n", i, h[i], iScore)
+	fmt.Printf("j %d: %v, score: %d\n", j, h[j], jScore)
+	fmt.Printf("-----\n")
+
+	return iScore < jScore
 }
 
 func (h Hands) ParseHandsAndBids(reader *bufio.Scanner) (game Hands, err error) {
@@ -86,6 +111,26 @@ func (h Hand) handToMap() (handMap map[string]int) {
 	}
 
 	return handMap
+}
+
+func (h Hand) checkRules() (result int) {
+	switch {
+	case h.IsFiveOfAKind():
+		result = 7
+	case h.IsFourOfAKind():
+		result = 6
+	case h.IsFullHouse():
+		result = 5
+	case h.IsThreeOfAKind():
+		result = 4
+	case h.IsTwoPair():
+		result = 3
+	case h.IsOnePair():
+		result = 2
+	case h.IsHighCard():
+		result = 1
+	}
+	return
 }
 
 // where all five cards have the same label: AAAAA
@@ -154,5 +199,37 @@ func getSortedValues(m map[string]int) (values []int) {
 	}
 
 	slices.Sort(values)
+	return
+}
+
+func cardToScore(card byte) (score int) {
+	switch card {
+	case 'A':
+		score = 14
+	case 'K':
+		score = 13
+	case 'Q':
+		score = 12
+	case 'J':
+		score = 11
+	case 'T':
+		score = 10
+	case '9':
+		score = 9
+	case '8':
+		score = 8
+	case '7':
+		score = 7
+	case '6':
+		score = 6
+	case '5':
+		score = 5
+	case '4':
+		score = 4
+	case '3':
+		score = 3
+	case '2':
+		score = 2
+	}
 	return
 }
