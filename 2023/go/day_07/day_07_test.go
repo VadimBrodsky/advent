@@ -1,6 +1,7 @@
 package day07
 
 import (
+	"os"
 	"slices"
 	"testing"
 )
@@ -24,11 +25,28 @@ QQQJA 483`
 
 		hands := NewCamelGame(sampleHandsAndBids)
 		gotSortedByRanks := hands.SortByRanks()
-    gotTotalWinnings := hands.Winnings()
+		gotTotalWinnings := hands.Winnings()
 
 		if !slices.Equal(wantSortedByRanks, gotSortedByRanks) {
 			t.Errorf("want %v, got %v", wantSortedByRanks, gotSortedByRanks)
 		}
+
+		if wantTotalWinnings != gotTotalWinnings {
+			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
+		}
+	})
+
+	t.Run("get the correct total winnings for the full input", func(t *testing.T) {
+		fullHandsAndBidsInput, err := os.ReadFile("input.txt")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		wantTotalWinnings := 251058093
+
+		hands := NewCamelGame(string(fullHandsAndBidsInput))
+		hands.SortByRanks()
+		gotTotalWinnings := hands.Winnings()
 
 		if wantTotalWinnings != gotTotalWinnings {
 			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
