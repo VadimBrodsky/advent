@@ -26,19 +26,18 @@ func NewCamelGame(input string) (game Hands) {
 		panic("something broke: " + err.Error())
 	}
 
-	fmt.Printf("game: %v\n", game)
-	m := game[0].handToMap()
-	fmt.Printf("mapp: %v, len: %d\n", m, len(m))
 	return
 }
 
 func (h Hands) SortByRanks() Hands {
 	sort.Sort(h)
-	fmt.Printf("%v\n", h)
 	return h
 }
 
 func (h Hands) Winnings() (winnings int) {
+	for i, hand := range h {
+		winnings += (i + 1) * hand.bid
+	}
 	return
 }
 
@@ -55,8 +54,6 @@ func (h Hands) Less(i, j int) bool {
 	jScore := h[j].checkRules()
 
 	if iScore == jScore {
-		fmt.Printf("tie iScore: %d, jScore: %d\n", iScore, jScore)
-
 		for k := range h[i].cards {
 			iCard, jCard := h[i].cards[k], h[j].cards[k]
 			if iCard == jCard {
@@ -66,15 +63,9 @@ func (h Hands) Less(i, j int) bool {
 			iScore = cardToScore(iCard)
 			jScore = cardToScore(jCard)
 
-			// fmt.Printf("iCard: %s, jCard: %s, iScore: %d, jScore: %d\n", string(iCard), string(jCard), iScore, jScore)
 			break
 		}
 	}
-
-	fmt.Printf("i %d: %v, score: %d\n", i, h[i], iScore)
-	fmt.Printf("j %d: %v, score: %d\n", j, h[j], jScore)
-	fmt.Printf("-----\n")
-
 	return iScore < jScore
 }
 

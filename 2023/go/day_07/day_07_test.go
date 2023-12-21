@@ -17,14 +17,14 @@ QQQJA 483`
 			Hand{cards: "32T3K", bid: 765},
 			Hand{cards: "KTJJT", bid: 220},
 			Hand{cards: "KK677", bid: 28},
-			Hand{cards: "QQQJA", bid: 482},
-			Hand{cards: "T55JS", bid: 684},
+			Hand{cards: "T55J5", bid: 684},
+			Hand{cards: "QQQJA", bid: 483},
 		}
 		wantTotalWinnings := 6440
 
 		hands := NewCamelGame(sampleHandsAndBids)
 		gotSortedByRanks := hands.SortByRanks()
-		gotTotalWinnings := hands.Winnings()
+    gotTotalWinnings := hands.Winnings()
 
 		if !slices.Equal(wantSortedByRanks, gotSortedByRanks) {
 			t.Errorf("want %v, got %v", wantSortedByRanks, gotSortedByRanks)
