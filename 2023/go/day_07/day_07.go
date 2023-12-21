@@ -11,6 +11,11 @@ import (
 	"strings"
 )
 
+type Game struct {
+	hands  Hands
+	jokers bool
+}
+
 type Hand struct {
 	cards string
 	bid   int
@@ -18,7 +23,7 @@ type Hand struct {
 
 type Hands []Hand
 
-func NewCamelGame(input string) (game Hands) {
+func NewCamelGame(input string, jokers bool) (game Game) {
 	reader := bufio.NewScanner(strings.NewReader(input))
 	game, err := game.ParseHandsAndBids(reader)
 
@@ -29,13 +34,13 @@ func NewCamelGame(input string) (game Hands) {
 	return
 }
 
-func (h Hands) SortByRanks() Hands {
-	sort.Sort(h)
-	return h
+func (g Game) SortByRanks() Hands {
+	sort.Sort(g.hands)
+	return g.hands
 }
 
-func (h Hands) Winnings() (winnings int) {
-	for i, hand := range h {
+func (g Game) Winnings() (winnings int) {
+	for i, hand := range g.hands {
 		winnings += (i + 1) * hand.bid
 	}
 	return
@@ -69,7 +74,7 @@ func (h Hands) Less(i, j int) bool {
 	return iScore < jScore
 }
 
-func (h Hands) ParseHandsAndBids(reader *bufio.Scanner) (game Hands, err error) {
+func (g Game) ParseHandsAndBids(reader *bufio.Scanner) (game Game, err error) {
 	for reader.Scan() {
 		line := reader.Text()
 		cards, b, found := strings.Cut(line, " ")
@@ -83,7 +88,7 @@ func (h Hands) ParseHandsAndBids(reader *bufio.Scanner) (game Hands, err error) 
 			err = intErr
 		}
 
-		game = append(game, Hand{cards: cards, bid: bid})
+		game.hands = append(game.hands, Hand{cards: cards, bid: bid})
 	}
 	return
 }

@@ -23,7 +23,7 @@ QQQJA 483`
 		}
 		wantTotalWinnings := 6440
 
-		hands := NewCamelGame(sampleHandsAndBids)
+		hands := NewCamelGame(sampleHandsAndBids,false)
 		gotSortedByRanks := hands.SortByRanks()
 		gotTotalWinnings := hands.Winnings()
 
@@ -44,7 +44,7 @@ QQQJA 483`
 
 		wantTotalWinnings := 251058093
 
-		hands := NewCamelGame(string(fullHandsAndBidsInput))
+		hands := NewCamelGame(string(fullHandsAndBidsInput), false)
 		hands.SortByRanks()
 		gotTotalWinnings := hands.Winnings()
 
@@ -52,4 +52,27 @@ QQQJA 483`
 			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
 		}
 	})
+
+  t.Run("get the correct total winnings with jokers for the sample input", func(t *testing.T) {
+		wantSortedByRanks := Hands{
+			Hand{cards: "32T3K", bid: 765},
+      Hand{cards: "KK677", bid: 28},
+      Hand{cards: "T55J5", bid: 684},
+      Hand{cards: "QQQJA", bid: 483},
+			Hand{cards: "KTJJT", bid: 220},
+		}
+		wantTotalWinnings := 5905
+
+		hands := NewCamelGame(sampleHandsAndBids, true)
+		gotSortedByRanks := hands.SortByRanks()
+		gotTotalWinnings := hands.Winnings()
+
+		if !slices.Equal(wantSortedByRanks, gotSortedByRanks) {
+			t.Errorf("want %v, got %v", wantSortedByRanks, gotSortedByRanks)
+		}
+
+		if wantTotalWinnings != gotTotalWinnings {
+			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
+		}
+  })
 }
