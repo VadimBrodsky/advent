@@ -3,6 +3,7 @@ package day07
 import (
 	"os"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -23,7 +24,7 @@ QQQJA 483`
 		}
 		wantTotalWinnings := 6440
 
-		hands := NewCamelGame(sampleHandsAndBids,false)
+		hands := NewCamelGame(strings.NewReader(sampleHandsAndBids), false)
 		gotSortedByRanks := hands.SortByRanks()
 		gotTotalWinnings := hands.Winnings()
 
@@ -37,14 +38,15 @@ QQQJA 483`
 	})
 
 	t.Run("get the correct total winnings for the full input", func(t *testing.T) {
-		fullHandsAndBidsInput, err := os.ReadFile("input.txt")
+		file, err := os.Open("input.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer file.Close()
 
 		wantTotalWinnings := 251058093
 
-		hands := NewCamelGame(string(fullHandsAndBidsInput), false)
+		hands := NewCamelGame(file, false)
 		hands.SortByRanks()
 		gotTotalWinnings := hands.Winnings()
 
@@ -53,17 +55,17 @@ QQQJA 483`
 		}
 	})
 
-  t.Run("get the correct total winnings with jokers for the sample input", func(t *testing.T) {
+	t.Run("get the correct total winnings with jokers for the sample input", func(t *testing.T) {
 		wantSortedByRanks := Hands{
 			Hand{cards: "32T3K", bid: 765},
-      Hand{cards: "KK677", bid: 28},
-      Hand{cards: "T55J5", bid: 684},
-      Hand{cards: "QQQJA", bid: 483},
+			Hand{cards: "KK677", bid: 28},
+			Hand{cards: "T55J5", bid: 684},
+			Hand{cards: "QQQJA", bid: 483},
 			Hand{cards: "KTJJT", bid: 220},
 		}
 		wantTotalWinnings := 5905
 
-		hands := NewCamelGame(sampleHandsAndBids, true)
+		hands := NewCamelGame(strings.NewReader(sampleHandsAndBids), true)
 		gotSortedByRanks := hands.SortByRanks()
 		gotTotalWinnings := hands.Winnings()
 
@@ -74,5 +76,5 @@ QQQJA 483`
 		if wantTotalWinnings != gotTotalWinnings {
 			t.Errorf("want %d, got %d", wantTotalWinnings, gotTotalWinnings)
 		}
-  })
+	})
 }

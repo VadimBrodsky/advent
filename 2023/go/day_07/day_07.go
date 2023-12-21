@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"regexp"
 	"slices"
 	"sort"
@@ -23,8 +24,8 @@ type Hand struct {
 
 type Hands []Hand
 
-func NewCamelGame(input string, jokers bool) (game Game) {
-	reader := bufio.NewScanner(strings.NewReader(input))
+func NewCamelGame(input io.Reader, jokers bool) (game Game) {
+	reader := bufio.NewScanner(input)
 	game, err := game.ParseHandsAndBids(reader)
 
 	if err != nil {
