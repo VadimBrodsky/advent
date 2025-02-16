@@ -12,31 +12,44 @@ function parseLists(input: string, columns = 2): List[] {
       out[index % columns].push(Number.parseInt(num));
     });
 
-  return out;
+  return out.map((list) => list.sort());
 }
 
 function calculateTotalDisance(input: List[]): number {
-  return input
-    .map((list) => list.sort())
-    .reduce<number>((acc, list, listIndex, sortedLists) => {
-      list.forEach((number, index) => {
-        const nextList = sortedLists[listIndex + 1];
+  return input.reduce<number>((acc, list, listIndex, input) => {
+    list.forEach((number, index) => {
+      const nextList = input[listIndex + 1];
 
-        if (nextList) {
-          acc += Math.abs(number - nextList[index]);
-        }
-      });
-      return acc;
-    }, 0);
+      if (nextList) {
+        acc += Math.abs(number - nextList[index]);
+      }
+    });
+    return acc;
+  }, 0);
+}
+
+function calculateSimilarityScores(input: List[]): number[] {
+  let numberFrequency = input[0].reduce<Map<number,number>>((acc, listANum, index, listA) => {
+    let listB = input[1];
+    let sameNumberIndex = listB.findIndex((listBNum) => listBNum === listANum)
+
+    if (sameNumberIndex !== -1) {
+      acc.set(listANum, (acc.get(listANum) || 0) + 1);
+    }
+
+
+    return acc;
+  }, new Map());
+
+  console.log(numberFrequency.entries())
+  return [];
 }
 
 if (import.meta.vitest) {
   const { it, expect, describe } = import.meta.vitest;
 
   describe("day 01", () => {
-    describe("part 1", () => {
-      it("sample input", () => {
-        let sampleInput = `
+    let sampleInput = `
           3   4
           4   3
           2   5
@@ -45,6 +58,8 @@ if (import.meta.vitest) {
           3   3
         `;
 
+    describe("part 1", () => {
+      it("sample input", () => {
         let [list1, list2] = parseLists(sampleInput);
         let disance = calculateTotalDisance([list1, list2]);
 
@@ -60,6 +75,18 @@ if (import.meta.vitest) {
 
         expect(distance).toEqual(1882714);
       });
+    });
+
+    describe("part 2", () => {
+      it("sample input", () => {
+        let lists = parseLists(sampleInput);
+        let similarityScores = calculateSimilarityScores(lists);
+        let totalScore = similarityScores.reduce<number>((acc, score) => acc + score, 0);
+
+        expect(totalScore).toEqual(31);
+      });
+
+      it.skip("full input");
     });
   });
 }
