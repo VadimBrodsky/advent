@@ -1,9 +1,11 @@
+import { readFile } from "node:fs/promises";
+
 type List = number[];
 
 function parseLists(input: string, columns = 2): List[] {
   let out = Array.from({ length: columns }).map(() => []);
 
-  const a = input
+  input
     .trim()
     .split(/\s+/)
     .forEach((num, index) => {
@@ -14,39 +16,50 @@ function parseLists(input: string, columns = 2): List[] {
 }
 
 function calculateTotalDisance(input: List[]): number {
-  let acc = 0;
-  let sortedLists = input.map((list) => list.sort());
+  return input
+    .map((list) => list.sort())
+    .reduce<number>((acc, list, listIndex, sortedLists) => {
+      list.forEach((number, index) => {
+        const nextList = sortedLists[listIndex + 1];
 
-  sortedLists.forEach((list, listIndex) => {
-    list.forEach((number, index) => {
-      const nextList = sortedLists[listIndex + 1];
-      if (!nextList) {
-        return;
-      }
-      acc += Math.abs(number - nextList[index]);
-    });
-  });
-
-  return acc;
+        if (nextList) {
+          acc += Math.abs(number - nextList[index]);
+        }
+      });
+      return acc;
+    }, 0);
 }
 
 if (import.meta.vitest) {
   const { it, expect, describe } = import.meta.vitest;
 
   describe("day 01", () => {
-    it("gets the correct total disance for the same input", () => {
-      let sampleInput = `
-      3   4
-      4   3
-      2   5
-      1   3
-      3   9
-      3   3`;
+    describe("part 1", () => {
+      it("sample input", () => {
+        let sampleInput = `
+          3   4
+          4   3
+          2   5
+          1   3
+          3   9
+          3   3
+        `;
 
-      let [list1, list2] = parseLists(sampleInput);
-      let disance = calculateTotalDisance([list1, list2]);
+        let [list1, list2] = parseLists(sampleInput);
+        let disance = calculateTotalDisance([list1, list2]);
 
-      expect(disance).toBe(11);
+        expect(disance).toBe(11);
+      });
+
+      it("full input", async () => {
+        let filePath = new URL("./input.txt", import.meta.url);
+        let input = await readFile(filePath, { encoding: "utf8" });
+
+        let lists = parseLists(input, 2);
+        let distance = calculateTotalDisance(lists);
+
+        expect(distance).toEqual(1882714);
+      });
     });
   });
 }
